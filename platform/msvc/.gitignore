@@ -1,0 +1,5 @@
+shadertrans/
+projects/*
+
+!projects/shadertrans.vcxproj
+!projects/shadertrans.vcxproj.filters

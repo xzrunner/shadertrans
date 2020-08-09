@@ -617,21 +617,26 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
 
 void ShaderTrans::SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>& spirv, std::string& glsl)
 {
-    spirv_cross::CompilerGLSL compiler(spirv);
-
-    auto op = compiler.get_common_options();
-    op.emit_uniform_buffer_as_plain_uniforms = true;
-    compiler.set_common_options(op);
-
     try {
-        compiler.build_combined_image_samplers();
-        glsl = compiler.compile();
-    } catch (const std::exception& e) {
-        printf("%s\n", e.what());
-        return;
-    }
+        spirv_cross::CompilerGLSL compiler(spirv);
 
-    printf("%s\n", glsl.c_str());
+        auto op = compiler.get_common_options();
+        op.emit_uniform_buffer_as_plain_uniforms = true;
+        compiler.set_common_options(op);
+
+        try {
+            compiler.build_combined_image_samplers();
+            glsl = compiler.compile();
+        }
+        catch (const std::exception& e) {
+            printf("%s\n", e.what());
+            return;
+        }
+
+        //printf("%s\n", glsl.c_str());
+    } catch (std::exception& e) {
+        printf("spir-v to glsl fail: %s\n", e.what());
+    }
 }
 
 }

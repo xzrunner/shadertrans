@@ -544,6 +544,8 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
 void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl, 
 	                         std::vector<unsigned int>& spirv)
 {
+    spirv.clear();
+
     if (!glsl::glslang_inited)
     {
         glslang::InitializeProcess();

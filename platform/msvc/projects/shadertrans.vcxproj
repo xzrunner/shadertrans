@@ -11,10 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\CompilerDX.cpp" />
     <ClCompile Include="..\..\..\source\ShaderTrans.cpp" />
+    <ClCompile Include="..\..\..\source\ShaderValidator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\shadertrans\CompilerDX.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\ConfigGLSL.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderStage.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderTrans.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderValidator.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>3.shadertrans</ProjectName>

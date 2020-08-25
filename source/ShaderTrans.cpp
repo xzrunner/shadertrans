@@ -1,13 +1,12 @@
 #include "shadertrans/ShaderTrans.h"
+#include "shadertrans/ConfigGLSL.h"
+#include "shadertrans/CompilerDX.h"
 
 #include <glslang/public/ShaderLang.h>
 #include <glslang/include/StandAlone/DirStackFileIncluder.h>
 #include <glslang/include/SPIRV/GlslangToSpv.h>
 #include <spirv-cross/spirv.hpp>
 #include <spirv-cross/spirv_glsl.hpp>
-#include <dxc/Support/Global.h>
-#include <dxc/Support/Unicode.h>
-#include <dxc/Support/WinAdapter.h>
 #include <dxc/Support/WinIncludes.h>
 #include <dxc/dxcapi.h>
 
@@ -16,114 +15,6 @@
 
 namespace glsl
 {
-
-const TBuiltInResource DefaultTBuiltInResource = {
-    /* .MaxLights = */ 32,
-    /* .MaxClipPlanes = */ 6,
-    /* .MaxTextureUnits = */ 32,
-    /* .MaxTextureCoords = */ 32,
-    /* .MaxVertexAttribs = */ 64,
-    /* .MaxVertexUniformComponents = */ 4096,
-    /* .MaxVaryingFloats = */ 64,
-    /* .MaxVertexTextureImageUnits = */ 32,
-    /* .MaxCombinedTextureImageUnits = */ 80,
-    /* .MaxTextureImageUnits = */ 32,
-    /* .MaxFragmentUniformComponents = */ 4096,
-    /* .MaxDrawBuffers = */ 32,
-    /* .MaxVertexUniformVectors = */ 128,
-    /* .MaxVaryingVectors = */ 8,
-    /* .MaxFragmentUniformVectors = */ 16,
-    /* .MaxVertexOutputVectors = */ 16,
-    /* .MaxFragmentInputVectors = */ 15,
-    /* .MinProgramTexelOffset = */ -8,
-    /* .MaxProgramTexelOffset = */ 7,
-    /* .MaxClipDistances = */ 8,
-    /* .MaxComputeWorkGroupCountX = */ 65535,
-    /* .MaxComputeWorkGroupCountY = */ 65535,
-    /* .MaxComputeWorkGroupCountZ = */ 65535,
-    /* .MaxComputeWorkGroupSizeX = */ 1024,
-    /* .MaxComputeWorkGroupSizeY = */ 1024,
-    /* .MaxComputeWorkGroupSizeZ = */ 64,
-    /* .MaxComputeUniformComponents = */ 1024,
-    /* .MaxComputeTextureImageUnits = */ 16,
-    /* .MaxComputeImageUniforms = */ 8,
-    /* .MaxComputeAtomicCounters = */ 8,
-    /* .MaxComputeAtomicCounterBuffers = */ 1,
-    /* .MaxVaryingComponents = */ 60,
-    /* .MaxVertexOutputComponents = */ 64,
-    /* .MaxGeometryInputComponents = */ 64,
-    /* .MaxGeometryOutputComponents = */ 128,
-    /* .MaxFragmentInputComponents = */ 128,
-    /* .MaxImageUnits = */ 8,
-    /* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
-    /* .MaxCombinedShaderOutputResources = */ 8,
-    /* .MaxImageSamples = */ 0,
-    /* .MaxVertexImageUniforms = */ 0,
-    /* .MaxTessControlImageUniforms = */ 0,
-    /* .MaxTessEvaluationImageUniforms = */ 0,
-    /* .MaxGeometryImageUniforms = */ 0,
-    /* .MaxFragmentImageUniforms = */ 8,
-    /* .MaxCombinedImageUniforms = */ 8,
-    /* .MaxGeometryTextureImageUnits = */ 16,
-    /* .MaxGeometryOutputVertices = */ 256,
-    /* .MaxGeometryTotalOutputComponents = */ 1024,
-    /* .MaxGeometryUniformComponents = */ 1024,
-    /* .MaxGeometryVaryingComponents = */ 64,
-    /* .MaxTessControlInputComponents = */ 128,
-    /* .MaxTessControlOutputComponents = */ 128,
-    /* .MaxTessControlTextureImageUnits = */ 16,
-    /* .MaxTessControlUniformComponents = */ 1024,
-    /* .MaxTessControlTotalOutputComponents = */ 4096,
-    /* .MaxTessEvaluationInputComponents = */ 128,
-    /* .MaxTessEvaluationOutputComponents = */ 128,
-    /* .MaxTessEvaluationTextureImageUnits = */ 16,
-    /* .MaxTessEvaluationUniformComponents = */ 1024,
-    /* .MaxTessPatchComponents = */ 120,
-    /* .MaxPatchVertices = */ 32,
-    /* .MaxTessGenLevel = */ 64,
-    /* .MaxViewports = */ 16,
-    /* .MaxVertexAtomicCounters = */ 0,
-    /* .MaxTessControlAtomicCounters = */ 0,
-    /* .MaxTessEvaluationAtomicCounters = */ 0,
-    /* .MaxGeometryAtomicCounters = */ 0,
-    /* .MaxFragmentAtomicCounters = */ 8,
-    /* .MaxCombinedAtomicCounters = */ 8,
-    /* .MaxAtomicCounterBindings = */ 1,
-    /* .MaxVertexAtomicCounterBuffers = */ 0,
-    /* .MaxTessControlAtomicCounterBuffers = */ 0,
-    /* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
-    /* .MaxGeometryAtomicCounterBuffers = */ 0,
-    /* .MaxFragmentAtomicCounterBuffers = */ 1,
-    /* .MaxCombinedAtomicCounterBuffers = */ 1,
-    /* .MaxAtomicCounterBufferSize = */ 16384,
-    /* .MaxTransformFeedbackBuffers = */ 4,
-    /* .MaxTransformFeedbackInterleavedComponents = */ 64,
-    /* .MaxCullDistances = */ 8,
-    /* .MaxCombinedClipAndCullDistances = */ 8,
-    /* .MaxSamples = */ 4,
-    /* .maxMeshOutputVerticesNV = */ 256,
-    /* .maxMeshOutputPrimitivesNV = */ 512,
-    /* .maxMeshWorkGroupSizeX_NV = */ 32,
-    /* .maxMeshWorkGroupSizeY_NV = */ 1,
-    /* .maxMeshWorkGroupSizeZ_NV = */ 1,
-    /* .maxTaskWorkGroupSizeX_NV = */ 32,
-    /* .maxTaskWorkGroupSizeY_NV = */ 1,
-    /* .maxTaskWorkGroupSizeZ_NV = */ 1,
-    /* .maxMeshViewCountNV = */ 4,
-    /* .maxDualSourceDrawBuffersEXT = */ 1,
-
-    /* .limits = */ {
-        /* .nonInductiveForLoops = */ 1,
-        /* .whileLoops = */ 1,
-        /* .doWhileLoops = */ 1,
-        /* .generalUniformIndexing = */ 1,
-        /* .generalAttributeMatrixVectorIndexing = */ 1,
-        /* .generalVaryingIndexing = */ 1,
-        /* .generalSamplerIndexing = */ 1,
-        /* .generalVariableIndexing = */ 1,
-        /* .generalConstantMatrixVectorIndexing = */ 1,
-    }
-};
 
 EShLanguage type2glslang(shadertrans::ShaderStage stage)
 {
@@ -145,144 +36,10 @@ EShLanguage type2glslang(shadertrans::ShaderStage stage)
 
 bool glslang_inited = false;
 
-
 }
 
-// code from https://github.com/microsoft/ShaderConductor
 namespace hlsl
 {
-
-bool dllDetaching = false;
-
-class Dxcompiler
-{
-public:
-    ~Dxcompiler()
-    {
-        this->Destroy();
-    }
-
-    static Dxcompiler& Instance()
-    {
-        static Dxcompiler instance;
-        return instance;
-    }
-
-    IDxcLibrary* Library() const
-    {
-        return m_library;
-    }
-
-    IDxcCompiler* Compiler() const
-    {
-        return m_compiler;
-    }
-
-    CComPtr<IDxcLinker> CreateLinker() const
-    {
-        CComPtr<IDxcLinker> linker;
-        IFT(m_createInstanceFunc(CLSID_DxcLinker, __uuidof(IDxcLinker), reinterpret_cast<void**>(&linker)));
-        return linker;
-    }
-
-    bool LinkerSupport() const
-    {
-        return m_linkerSupport;
-    }
-
-    void Destroy()
-    {
-        if (m_dxcompilerDll)
-        {
-            m_compiler = nullptr;
-            m_library = nullptr;
-
-            m_createInstanceFunc = nullptr;
-
-#ifdef _WIN32
-            ::FreeLibrary(m_dxcompilerDll);
-#else
-            ::dlclose(m_dxcompilerDll);
-#endif
-
-            m_dxcompilerDll = nullptr;
-        }
-    }
-
-    void Terminate()
-    {
-        if (m_dxcompilerDll)
-        {
-            m_compiler.Detach();
-            m_library.Detach();
-
-            m_createInstanceFunc = nullptr;
-
-            m_dxcompilerDll = nullptr;
-        }
-    }
-
-private:
-    Dxcompiler()
-    {
-        if (dllDetaching)
-        {
-            return;
-        }
-
-#ifdef _WIN32
-        const char* dllName = "dxcompiler.dll";
-#elif __APPLE__
-        const char* dllName = "libdxcompiler.dylib";
-#else
-        const char* dllName = "libdxcompiler.so";
-#endif
-        const char* functionName = "DxcCreateInstance";
-
-#ifdef _WIN32
-        m_dxcompilerDll = ::LoadLibraryA(dllName);
-#else
-        m_dxcompilerDll = ::dlopen(dllName, RTLD_LAZY);
-#endif
-
-        if (m_dxcompilerDll != nullptr)
-        {
-#ifdef _WIN32
-            m_createInstanceFunc = (DxcCreateInstanceProc)::GetProcAddress(m_dxcompilerDll, functionName);
-#else
-            m_createInstanceFunc = (DxcCreateInstanceProc)::dlsym(m_dxcompilerDll, functionName);
-#endif
-
-            if (m_createInstanceFunc != nullptr)
-            {
-                IFT(m_createInstanceFunc(CLSID_DxcLibrary, __uuidof(IDxcLibrary), reinterpret_cast<void**>(&m_library)));
-                IFT(m_createInstanceFunc(CLSID_DxcCompiler, __uuidof(IDxcCompiler), reinterpret_cast<void**>(&m_compiler)));
-            }
-            else
-            {
-                this->Destroy();
-
-                throw std::runtime_error(std::string("COULDN'T get ") + functionName + " from dxcompiler.");
-            }
-        }
-        else
-        {
-            throw std::runtime_error("COULDN'T load dxcompiler.");
-        }
-
-        m_linkerSupport = (CreateLinker() != nullptr);
-    }
-
-private:
-    HMODULE m_dxcompilerDll = nullptr;
-    DxcCreateInstanceProc m_createInstanceFunc = nullptr;
-
-    CComPtr<IDxcLibrary> m_library;
-    CComPtr<IDxcCompiler> m_compiler;
-
-    bool m_linkerSupport;
-}; // Dxcompiler
-
 
 class Blob
 {
@@ -349,8 +106,9 @@ public:
         }
 
         *includeSource = nullptr;
-        return Dxcompiler::Instance().Library()->CreateBlobWithEncodingOnHeapCopy(source->Data(), source->Size(), CP_UTF8,
-                                                                                    reinterpret_cast<IDxcBlobEncoding**>(includeSource));
+        return shadertrans::CompilerDX::Instance().Library()->CreateBlobWithEncodingOnHeapCopy(
+            source->Data(), source->Size(), CP_UTF8, reinterpret_cast<IDxcBlobEncoding**>(includeSource)
+        );
     }
 
     ULONG STDMETHODCALLTYPE AddRef() override
@@ -415,71 +173,6 @@ Blob* DefaultLoadCallback(const char* includeName)
     return CreateBlob(ret.data(), static_cast<uint32_t>(ret.size()));
 }
 
-struct ShaderModel
-{
-    uint8_t major_ver : 6;
-    uint8_t minor_ver : 2;
-
-    uint32_t FullVersion() const noexcept
-    {
-        return (major_ver << 2) | minor_ver;
-    }
-
-    bool operator<(const ShaderModel& other) const noexcept
-    {
-        return this->FullVersion() < other.FullVersion();
-    }
-    bool operator==(const ShaderModel& other) const noexcept
-    {
-        return this->FullVersion() == other.FullVersion();
-    }
-    bool operator>(const ShaderModel& other) const noexcept
-    {
-        return other < *this;
-    }
-    bool operator<=(const ShaderModel& other) const noexcept
-    {
-        return (*this < other) || (*this == other);
-    }
-    bool operator>=(const ShaderModel& other) const noexcept
-    {
-        return (*this > other) || (*this == other);
-    }
-};
-
-std::wstring ShaderProfileName(shadertrans::ShaderStage stage, ShaderModel shaderModel)
-{
-    std::wstring shaderProfile;
-    switch (stage)
-    {
-    case shadertrans::ShaderStage::VertexShader:
-        shaderProfile = L"vs";
-        break;
-
-    case shadertrans::ShaderStage::PixelShader:
-        shaderProfile = L"ps";
-        break;
-
-    case shadertrans::ShaderStage::GeometryShader:
-        shaderProfile = L"gs";
-        break;
-
-    case shadertrans::ShaderStage::ComputeShader:
-        shaderProfile = L"cs";
-        break;
-
-    default:
-        throw std::runtime_error("Invalid shader stage.");
-    }
-
-    shaderProfile.push_back(L'_');
-    shaderProfile.push_back(L'0' + shaderModel.major_ver);
-    shaderProfile.push_back(L'_');
-    shaderProfile.push_back(L'0' + shaderModel.minor_ver);
-
-    return shaderProfile;
-}
-
 const char* entryPoint = "main";
 
 }
@@ -496,19 +189,19 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
     dxcArgs.push_back(L"-spirv");
 
     CComPtr<IDxcBlobEncoding> sourceBlob;
-    IFT(hlsl::Dxcompiler::Instance().Library()->CreateBlobWithEncodingOnHeapCopy(hlsl.c_str(), hlsl.size(),
+    IFT(shadertrans::CompilerDX::Instance().Library()->CreateBlobWithEncodingOnHeapCopy(hlsl.c_str(), hlsl.size(),
         CP_UTF8, &sourceBlob));
     IFTARG(sourceBlob->GetBufferSize() >= 4);
 
     std::wstring entryPointUtf16;
     Unicode::UTF8ToUTF16String(hlsl::entryPoint, &entryPointUtf16);
 
-    std::wstring shaderProfile = hlsl::ShaderProfileName(stage, { 6, 0 });
+    std::wstring shaderProfile = hlsl_shader_profile_name(stage, 6, 0);;
 
     std::vector<DxcDefine> dxcDefines;
     CComPtr<IDxcIncludeHandler> includeHandler = new hlsl::ScIncludeHandler(std::move(hlsl::DefaultLoadCallback));
     CComPtr<IDxcOperationResult> compileResult;
-    IFT(hlsl::Dxcompiler::Instance().Compiler()->Compile(sourceBlob, nullptr, entryPointUtf16.c_str(), shaderProfile.c_str(),
+    IFT(shadertrans::CompilerDX::Instance().Compiler()->Compile(sourceBlob, nullptr, entryPointUtf16.c_str(), shaderProfile.c_str(),
         dxcArgs.data(), static_cast<UINT32>(dxcArgs.size()), dxcDefines.data(),
         static_cast<UINT32>(dxcDefines.size()), includeHandler, &compileResult));
 

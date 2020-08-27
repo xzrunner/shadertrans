@@ -1,6 +1,7 @@
 #include "shadertrans/ShaderTrans.h"
 #include "shadertrans/ConfigGLSL.h"
 #include "shadertrans/CompilerDX.h"
+#include "shadertrans/GLSLangAdapter.h"
 
 #include <glslang/public/ShaderLang.h>
 #include <glslang/include/StandAlone/DirStackFileIncluder.h>
@@ -13,7 +14,7 @@
 #include <iostream>
 #include <atomic>
 
-namespace glsl
+namespace
 {
 
 EShLanguage type2glslang(shadertrans::ShaderStage stage)
@@ -33,8 +34,6 @@ EShLanguage type2glslang(shadertrans::ShaderStage stage)
         return EShLangCount;
     }
 }
-
-bool glslang_inited = false;
 
 }
 
@@ -181,7 +180,7 @@ namespace shadertrans
 {
 
 void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl, 
-                             std::vector<unsigned int>& spirv)
+                             std::vector<unsigned int>& spirv, std::ostream& out)
 {
     std::vector<const wchar_t*> dxcArgs;
     dxcArgs.push_back(L"-Zpr");
@@ -199,7 +198,8 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
     std::wstring shaderProfile = hlsl_shader_profile_name(stage, 6, 0);;
 
     std::vector<DxcDefine> dxcDefines;
-    CComPtr<IDxcIncludeHandler> includeHandler = new hlsl::ScIncludeHandler(std::move(hlsl::DefaultLoadCallback));
+    //CComPtr<IDxcIncludeHandler> includeHandler = new hlsl::ScIncludeHandler(std::move(hlsl::DefaultLoadCallback));
+    CComPtr<IDxcIncludeHandler> includeHandler = nullptr;
     CComPtr<IDxcOperationResult> compileResult;
     IFT(shadertrans::CompilerDX::Instance().Compiler()->Compile(sourceBlob, nullptr, entryPointUtf16.c_str(), shaderProfile.c_str(),
         dxcArgs.data(), static_cast<UINT32>(dxcArgs.size()), dxcDefines.data(),
@@ -211,8 +211,8 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
     {
         if (errors->GetBufferSize() > 0)
         {
-            printf("%s\n", static_cast<const char*>(errors->GetBufferPointer()));
             spirv.clear();
+            out << static_cast<const char*>(errors->GetBufferPointer()) << "\n";
             return;
         }
         errors = nullptr;
@@ -235,17 +235,13 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
 }
 
 void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl, 
-	                         std::vector<unsigned int>& spirv)
+	                         std::vector<unsigned int>& spirv, std::ostream& out)
 {
+    GLSLangAdapter::Instance()->Init();
+
     spirv.clear();
 
-    if (!glsl::glslang_inited)
-    {
-        glslang::InitializeProcess();
-        glsl::glslang_inited = true;
-    }
-
-    const EShLanguage shader_type = glsl::type2glslang(stage);
+    const EShLanguage shader_type = type2glslang(stage);
     glslang::TShader shader(shader_type);
     const char* src_cstr = glsl.c_str();
     shader.setStrings(&src_cstr, 1);
@@ -276,9 +272,8 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
     std::string preprocessed_glsl;
     if (!shader.preprocess(&resources, default_version, ENoProfile, false, false, messages, &preprocessed_glsl, includer)) 
     {
-        std::cout << "GLSL Preprocessing Failed for: " << glsl << std::endl;
-        std::cout << shader.getInfoLog() << std::endl;
-        std::cout << shader.getInfoDebugLog() << std::endl;
+        out << "GLSL Preprocessing Failed for: " << glsl << "\n";
+        out << shader.getInfoLog() << "\n" << shader.getInfoDebugLog() << "\n";
         return;
     }
 
@@ -287,9 +282,8 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
 
     if (!shader.parse(&resources, 100, false, messages))
     {
-        std::cout << "GLSL Parsing Failed for: " << glsl << std::endl;
-        std::cout << shader.getInfoLog() << std::endl;
-        std::cout << shader.getInfoDebugLog() << std::endl;
+        out << "GLSL Parsing Failed for: " << glsl << "\n";
+        out << shader.getInfoLog() << "\n" << shader.getInfoDebugLog() << "\n";
         return;
     }
 
@@ -297,9 +291,8 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
     program.addShader(&shader);
     if (!program.link(messages))
     {
-        std::cout << "GLSL Linking Failed for: " << glsl << std::endl;
-        std::cout << shader.getInfoLog() << std::endl;
-        std::cout << shader.getInfoDebugLog() << std::endl;
+        out << "GLSL Linking Failed for: " << glsl << "\n";
+        out << shader.getInfoLog() << "\n" << shader.getInfoDebugLog() << "\n";
         return;
     }
 
@@ -308,7 +301,8 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
     glslang::GlslangToSpv(*program.getIntermediate(shader_type), spirv, &logger, &spv_options);
 }
 
-void ShaderTrans::SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>& spirv, std::string& glsl)
+void ShaderTrans::SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>& spirv, 
+                             std::string& glsl, std::ostream& out)
 {
     try {
         spirv_cross::CompilerGLSL compiler(spirv);
@@ -320,15 +314,14 @@ void ShaderTrans::SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>&
         try {
             compiler.build_combined_image_samplers();
             glsl = compiler.compile();
-        }
-        catch (const std::exception& e) {
-            printf("%s\n", e.what());
+        } catch (const std::exception& e) {
+            out << e.what() << "\n";
             return;
         }
 
         //printf("%s\n", glsl.c_str());
     } catch (std::exception& e) {
-        printf("spir-v to glsl fail: %s\n", e.what());
+        out << "spir-v to glsl fail: " << e.what() << "\n";
     }
 }
 

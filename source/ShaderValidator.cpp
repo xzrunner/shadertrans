@@ -5,6 +5,8 @@
 #include <dxc/Support/WinIncludes.h>
 #include <dxc/dxcapi.h>
 
+#include <iostream>
+
 #include <assert.h>
 
 namespace
@@ -22,14 +24,14 @@ ShaderValidator::ShaderValidator(ShaderStage stage)
 {
 }
 
-bool ShaderValidator::Validate(const std::string& code, bool is_glsl, std::string& msg) const
+bool ShaderValidator::Validate(const std::string& code, bool is_glsl, std::ostream& out) const
 {
 	if (is_glsl) 
 	{
 		if (!m_glsl) {
 			m_glsl = std::make_unique<CompilerGLSL>(m_stage);
 		}
-		return m_glsl->Validate(code, msg);
+		return m_glsl->Validate(code, out);
 	} 
 	else 
 	{
@@ -60,7 +62,7 @@ bool ShaderValidator::Validate(const std::string& code, bool is_glsl, std::strin
 		IFT(compileResult->GetErrorBuffer(&errors));
 		if (errors != nullptr) {
 			if (errors->GetBufferSize() > 0) {
-				msg = static_cast<const char*>(errors->GetBufferPointer());
+				out << static_cast<const char*>(errors->GetBufferPointer()) << "\n";
 				return false;
 			}
 			errors = nullptr;
@@ -108,13 +110,13 @@ ShaderValidator::CompilerGLSL::~CompilerGLSL()
 	ShFinalize();
 }
 
-bool ShaderValidator::CompilerGLSL::Validate(const std::string& code, std::string& msg) const
+bool ShaderValidator::CompilerGLSL::Validate(const std::string& code, std::ostream& out) const
 {
 	const char* shader_str = code.c_str();
 	int ret = ShCompile(m_compiler, &shader_str, 1, nullptr, EShOptNone,
 		&glsl::DefaultTBuiltInResource, 0, 100, false, EShMsgDefault);
 
-	msg = ShGetInfoLog(m_compiler);
+	out << ShGetInfoLog(m_compiler) << "\n";
 
 	return ret != 0;
 }

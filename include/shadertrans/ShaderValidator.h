@@ -15,7 +15,7 @@ class ShaderValidator
 public:
 	ShaderValidator(ShaderStage stage);
 
-	bool Validate(const std::string& code, bool is_glsl, std::string& msg) const;
+	bool Validate(const std::string& code, bool is_glsl, std::ostream& out) const;
 
 private:
 	class CompilerGLSL
@@ -24,7 +24,7 @@ private:
 		CompilerGLSL(ShaderStage lang);
 		~CompilerGLSL();
 
-		bool Validate(const std::string& code, std::string& msg) const;
+		bool Validate(const std::string& code, std::ostream& out) const;
 
 	private:
 		ShHandle m_compiler = nullptr;

@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\ShaderParser.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderInfo.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderTrans.cpp">
+      <Filter>trans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderValidator.cpp">
+      <Filter>check</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\CompilerDX.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GLSLangAdapter.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderInfo.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderTrans.h">
+      <Filter>trans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderValidator.h">
+      <Filter>check</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\CompilerDX.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\ConfigGLSL.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderStage.h">
+      <Filter>dataset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\GLSLangAdapter.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="parser">
+      <UniqueIdentifier>{aef7430c-537d-4077-9922-295ee3d68957}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="trans">
+      <UniqueIdentifier>{74cb491e-6c26-4c61-acbc-9f00e2cc10d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="check">
+      <UniqueIdentifier>{a82eb963-6753-41b4-ac3b-2dbfcb94094c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools">
+      <UniqueIdentifier>{fd097820-789b-4c58-b66f-6f547dfbe04b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dataset">
+      <UniqueIdentifier>{60d0bcf7-8f8d-40d3-a1ea-d8b2121c87e8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

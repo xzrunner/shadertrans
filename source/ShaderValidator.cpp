@@ -1,6 +1,7 @@
 #include "shadertrans/ShaderValidator.h"
 #include "shadertrans/ConfigGLSL.h"
 #include "shadertrans/CompilerDX.h"
+#include "shadertrans/GLSLangAdapter.h"
 
 #include <dxc/Support/WinIncludes.h>
 #include <dxc/dxcapi.h>
@@ -81,26 +82,7 @@ ShaderValidator::CompilerGLSL::CompilerGLSL(ShaderStage stage)
 	ShInitialize();  // also test reference counting of users
 	ShFinalize();    // also test reference counting of users
 
-	EShLanguage gl_stage;
-	switch (stage)
-	{
-	case ShaderStage::VertexShader:
-		gl_stage = EShLangVertex;
-		break;
-	case ShaderStage::PixelShader:
-		gl_stage = EShLangFragment;
-		break;
-	case ShaderStage::GeometryShader:
-		gl_stage = EShLangGeometry;
-		break;
-	case ShaderStage::ComputeShader:
-		gl_stage = EShLangCompute;
-		break;
-	default:
-		assert(0);
-	}
-
-	m_compiler = ShConstructCompiler(gl_stage, 0);
+	m_compiler = ShConstructCompiler(GLSLangAdapter::Type2GLSLang(stage), 0);
 }
 
 ShaderValidator::CompilerGLSL::~CompilerGLSL()

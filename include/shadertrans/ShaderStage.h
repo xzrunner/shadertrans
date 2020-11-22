@@ -8,10 +8,11 @@ namespace shadertrans
 enum class ShaderStage : uint32_t
 {
     VertexShader,
-    PixelShader,
+    TessCtrlShader,
+    TessEvalShader,
     GeometryShader,
-    HullShader,
-    DomainShader,
+    PixelShader,
+
     ComputeShader,
 
     NumShaderStages,

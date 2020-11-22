@@ -1,6 +1,6 @@
 #include "shadertrans/GLSLangAdapter.h"
 
-#include <glslang/public/ShaderLang.h>
+#include <assert.h>
 
 namespace shadertrans
 {
@@ -33,6 +33,28 @@ void GLSLangAdapter::Init()
 		glslang::InitializeProcess();
 		m_inited = true;
 	}
+}
+
+EShLanguage GLSLangAdapter::Type2GLSLang(shadertrans::ShaderStage stage)
+{
+    switch (stage)
+    {
+    case shadertrans::ShaderStage::VertexShader:
+        return EShLangVertex;
+    case shadertrans::ShaderStage::TessCtrlShader:
+        return EShLangTessControl;
+    case shadertrans::ShaderStage::TessEvalShader:
+        return EShLangTessEvaluation;
+    case shadertrans::ShaderStage::GeometryShader:
+        return EShLangGeometry;
+    case shadertrans::ShaderStage::PixelShader:
+        return EShLangFragment;
+    case shadertrans::ShaderStage::ComputeShader:
+        return EShLangCompute;
+    default:
+        assert(0);
+        return EShLangCount;
+    }
 }
 
 }

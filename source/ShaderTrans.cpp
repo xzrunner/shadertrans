@@ -14,29 +14,6 @@
 #include <iostream>
 #include <atomic>
 
-namespace
-{
-
-EShLanguage type2glslang(shadertrans::ShaderStage stage)
-{
-    switch (stage)
-    {
-    case shadertrans::ShaderStage::VertexShader:
-        return EShLangVertex;
-    case shadertrans::ShaderStage::PixelShader:
-        return EShLangFragment;
-    case shadertrans::ShaderStage::GeometryShader:
-        return EShLangGeometry;
-    case shadertrans::ShaderStage::ComputeShader:
-        return EShLangCompute;
-    default:
-        assert(0);
-        return EShLangCount;
-    }
-}
-
-}
-
 namespace hlsl
 {
 
@@ -241,7 +218,7 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
 
     spirv.clear();
 
-    const EShLanguage shader_type = type2glslang(stage);
+    const EShLanguage shader_type = GLSLangAdapter::Type2GLSLang(stage);
     glslang::TShader shader(shader_type);
     const char* src_cstr = glsl.c_str();
     shader.setStrings(&src_cstr, 1);

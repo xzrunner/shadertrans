@@ -43,19 +43,21 @@ std::wstring ShaderProfileName(shadertrans::ShaderStage stage, ShaderModel shade
     case shadertrans::ShaderStage::VertexShader:
         shaderProfile = L"vs";
         break;
-
-    case shadertrans::ShaderStage::PixelShader:
-        shaderProfile = L"ps";
+    case shadertrans::ShaderStage::TessCtrlShader:
+        shaderProfile = L"tcs";
         break;
-
+    case shadertrans::ShaderStage::TessEvalShader:
+        shaderProfile = L"tes";
+        break;
     case shadertrans::ShaderStage::GeometryShader:
         shaderProfile = L"gs";
         break;
-
+    case shadertrans::ShaderStage::PixelShader:
+        shaderProfile = L"ps";
+        break;
     case shadertrans::ShaderStage::ComputeShader:
         shaderProfile = L"cs";
         break;
-
     default:
         throw std::runtime_error("Invalid shader stage.");
     }

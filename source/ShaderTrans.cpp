@@ -215,6 +215,10 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
 void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
 	                         std::vector<unsigned int>& spirv, std::ostream& out)
 {
+    if (glsl.empty()) {
+        return;
+    }
+
     GLSLangAdapter::Instance()->Init();
 
     spirv.clear();

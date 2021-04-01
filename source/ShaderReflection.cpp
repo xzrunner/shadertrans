@@ -259,25 +259,33 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 		uniforms.push_back(unif);
 	}
 
-	//for (auto& resource : resources.storage_images)
-	//{
-	//	ImageUnit img;
+	for (auto& resource : resources.storage_images)
+	{
+		//ImageUnit img;
 
-	//	spirv_cross::SPIRType type = compiler.get_type(resource.base_type_id);
+		spirv_cross::SPIRType type = compiler.get_type(resource.base_type_id);
 
-	//	img.name = compiler.get_name(resource.id);
-	//	uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
-	//	img.unit = compiler.get_decoration(resource.id, spv::DecorationBinding);
-	//	img.fmt = parse_image_format(type.image.format);
-	//	img.access = parse_image_access(type.image.access);
+		//img.name = compiler.get_name(resource.id);
+		//uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+		//img.unit = compiler.get_decoration(resource.id, spv::DecorationBinding);
+		//img.fmt = parse_image_format(type.image.format);
+		//img.access = parse_image_access(type.image.access);
 
-	//	m_images.push_back(img);
+		//m_images.push_back(img);
 
-	//	Variable unif;
-	//	unif.name = img.name;
-	//	unif.type = VariableType::Sampler2D;
-	//	m_uniforms.push_back(unif);
-	//}
+		//Variable unif;
+		//unif.name = img.name;
+		//unif.type = VariableType::Sampler2D;
+		//m_uniforms.push_back(unif);
+        
+        Uniform unif;
+
+        unif.name = compiler.get_name(resource.id);
+
+        unif.type = VarType::Image;
+
+        uniforms.push_back(unif);
+	}
 }
 
 }

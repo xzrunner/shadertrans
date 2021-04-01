@@ -27,6 +27,7 @@ public:
         Mat3,
         Mat4,
         Sampler,
+        Image,
     };
 
     struct Uniform

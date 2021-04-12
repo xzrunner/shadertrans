@@ -22,6 +22,12 @@
     <ClCompile Include="..\..\..\source\ShaderReflection.cpp">
       <Filter>parser</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\external\SPIRV-Reflect\spirv_reflect.c">
+      <Filter>external\SPIRV-Reflect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\SPIRV-Tools\source\link\linker.cpp">
+      <Filter>external\SPIRV-Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\shadertrans\ShaderParser.h">
@@ -51,6 +57,12 @@
     <ClInclude Include="..\..\..\include\shadertrans\ShaderReflection.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\external\SPIRV-Reflect\spirv_reflect.h">
+      <Filter>external\SPIRV-Reflect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\external\SPIRV-Tools\include\spirv-tools\linker.hpp">
+      <Filter>external\SPIRV-Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="parser">
@@ -67,6 +79,15 @@
     </Filter>
     <Filter Include="dataset">
       <UniqueIdentifier>{60d0bcf7-8f8d-40d3-a1ea-d8b2121c87e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external">
+      <UniqueIdentifier>{9e051adf-896b-442b-b517-87ebb03bbfe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\SPIRV-Reflect">
+      <UniqueIdentifier>{ab929c2f-c516-4649-a4f4-4c8fc10b6cc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\SPIRV-Tools">
+      <UniqueIdentifier>{d6f83eae-bf2d-47a7-b81e-15ad6b0164eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

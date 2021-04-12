@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\external\SPIRV-Reflect\spirv_reflect.c" />
+    <ClCompile Include="..\..\..\external\SPIRV-Tools\source\link\linker.cpp" />
     <ClCompile Include="..\..\..\source\CompilerDX.cpp" />
     <ClCompile Include="..\..\..\source\GLSLangAdapter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderInfo.cpp" />
@@ -28,6 +30,8 @@
     <ClCompile Include="..\..\..\source\ShaderValidator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\external\SPIRV-Reflect\spirv_reflect.h" />
+    <ClInclude Include="..\..\..\external\SPIRV-Tools\include\spirv-tools\linker.hpp" />
     <ClInclude Include="..\..\..\include\shadertrans\CompilerDX.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ConfigGLSL.h" />
     <ClInclude Include="..\..\..\include\shadertrans\GLSLangAdapter.h" />
@@ -114,7 +118,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../include;../../../../glslang;../../../../SPIRV-Cross;../../../../DirectXShaderCompiler/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include;../../../external/SPIRV-Reflect;../../../external/SPIRV-Tools;../../../external/SPIRV-Tools/include;../../../external/SPIRV-Headers/include;../../../../glslang;../../../../SPIRV-Cross;../../../../DirectXShaderCompiler/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -123,7 +127,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../include;../../../../glslang;../../../../SPIRV-Cross;../../../../DirectXShaderCompiler/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include;../../../external/SPIRV-Reflect;../../../external/SPIRV-Tools;../../../external/SPIRV-Tools/include;../../../external/SPIRV-Headers/include;../../../../glslang;../../../../SPIRV-Cross;../../../../DirectXShaderCompiler/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>

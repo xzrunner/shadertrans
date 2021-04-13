@@ -213,7 +213,7 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
 }
 
 void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
-	                         std::vector<unsigned int>& spirv, std::ostream& out)
+	                         std::vector<unsigned int>& spirv, bool no_link, std::ostream& out)
 {
     if (glsl.empty()) {
         return;
@@ -269,18 +269,27 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
         return;
     }
 
-    glslang::TProgram program;
-    program.addShader(&shader);
-    if (!program.link(messages))
+    if (no_link)
     {
-        out << "GLSL Linking Failed for: " << glsl << "\n";
-        out << shader.getInfoLog() << "\n" << shader.getInfoDebugLog() << "\n";
-        return;
+        spv::SpvBuildLogger logger;
+        glslang::SpvOptions spv_options;
+        glslang::GlslangToSpv(*shader.getIntermediate(), spirv, &logger, &spv_options);
     }
+    else
+    {
+        glslang::TProgram program;
+        program.addShader(&shader);
+        if (!program.link(messages))
+        {
+            out << "GLSL Linking Failed for: " << glsl << "\n";
+            out << shader.getInfoLog() << "\n" << shader.getInfoDebugLog() << "\n";
+            return;
+        }
 
-    spv::SpvBuildLogger logger;
-    glslang::SpvOptions spv_options;
-    glslang::GlslangToSpv(*program.getIntermediate(shader_type), spirv, &logger, &spv_options);
+        spv::SpvBuildLogger logger;
+        glslang::SpvOptions spv_options;
+        glslang::GlslangToSpv(*program.getIntermediate(shader_type), spirv, &logger, &spv_options);
+    }
 }
 
 void ShaderTrans::SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>& spirv,

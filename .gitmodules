@@ -7,3 +7,12 @@
 [submodule "external/SPIRV-Headers"]
 	path = external/SPIRV-Headers
 	url = git@github.com:KhronosGroup/SPIRV-Headers.git
+[submodule "external/SPIRV-Cross"]
+	path = external/SPIRV-Cross
+	url = git@github.com:KhronosGroup/SPIRV-Cross.git
+[submodule "external/DirectXShaderCompiler"]
+	path = external/DirectXShaderCompiler
+	url = git@github.com:microsoft/DirectXShaderCompiler.git
+[submodule "external/glslang"]
+	path = external/glslang
+	url = git@github.com:KhronosGroup/glslang.git

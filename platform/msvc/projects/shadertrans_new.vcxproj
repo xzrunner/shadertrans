@@ -118,7 +118,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../include;../../../external/SPIRV-Reflect;../../../external/SPIRV-Tools;../../../external/SPIRV-Tools/include;../../../external/SPIRV-Headers/include;../../../../glslang;../../../../SPIRV-Cross;../../../../DirectXShaderCompiler/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include;../../../external/glslang;../../../external/SPIRV-Reflect;../../../external/SPIRV-Tools;../../../external/SPIRV-Tools/include;../../../external/SPIRV-Headers/include;../../../external/SPIRV-Cross;../../../external/DirectXShaderCompiler/include;../../../external/SpvGenTwo/lib/include;../../../external/SpvGenTwo/common/include;../../../../shaderlink\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -127,7 +127,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../../include;../../../external/SPIRV-Reflect;../../../external/SPIRV-Tools;../../../external/SPIRV-Tools/include;../../../external/SPIRV-Headers/include;../../../../glslang;../../../../SPIRV-Cross;../../../../DirectXShaderCompiler/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include;../../../external/glslang;../../../external/SPIRV-Reflect;../../../external/SPIRV-Tools;../../../external/SPIRV-Tools/include;../../../external/SPIRV-Headers/include;../../../external/SPIRV-Cross;../../../external/DirectXShaderCompiler/include;../../../external/SpvGenTwo/lib/include;../../../external/SpvGenTwo/common/include;../../../../shaderlink\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>

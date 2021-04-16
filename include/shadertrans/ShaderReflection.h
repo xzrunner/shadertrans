@@ -28,6 +28,7 @@ public:
         Mat4,
         Sampler,
         Image,
+        Void,
     };
 
     struct Variable
@@ -36,12 +37,19 @@ public:
         VarType type;
         std::vector<Variable> children;
     };
+
+    struct Function
+    {
+        std::vector<Variable> arguments;
+        Variable ret_type;
     };
 
 public:
     static void GetUniforms(const std::vector<unsigned int>& spirv, 
         std::vector<Variable>& uniforms);
 
+    static void GetFunction(const std::vector<unsigned int>& spirv,
+        const std::string& name, Function& func);
 
 }; // ShaderReflection
 

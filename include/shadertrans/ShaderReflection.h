@@ -30,16 +30,18 @@ public:
         Image,
     };
 
-    struct Uniform
+    struct Variable
     {
         std::string name;
         VarType type;
-        std::vector<Uniform> children;
+        std::vector<Variable> children;
+    };
     };
 
 public:
     static void GetUniforms(const std::vector<unsigned int>& spirv, 
-        std::vector<Uniform>& uniforms);
+        std::vector<Variable>& uniforms);
+
 
 }; // ShaderReflection
 

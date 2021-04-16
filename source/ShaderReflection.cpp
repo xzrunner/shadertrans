@@ -6,7 +6,7 @@
 namespace
 {
 
-using Uniform = shadertrans::ShaderReflection::Uniform;
+using Variable = shadertrans::ShaderReflection::Variable;
 using VarType = shadertrans::ShaderReflection::VarType;
 
 VarType parse_spir_type(const spirv_cross::SPIRType& type)
@@ -104,19 +104,19 @@ VarType parse_spir_type(const spirv_cross::SPIRType& type)
 void get_struct_uniforms(const spirv_cross::CompilerGLSL& compiler, 
                          spirv_cross::TypeID base_type_id,
                          const spirv_cross::SPIRType& type,
-                         std::vector<Uniform>& uniforms,
+                         std::vector<Variable>& uniforms,
                          const std::string& base_name)
 {   
     auto member_count = type.member_types.size();
     if (!type.array.empty()) 
     {
-        Uniform v_array;
+        Variable v_array;
         v_array.name = base_name;
         v_array.type = VarType::Array;
 
         for (int i = 0, n = type.array[0]; i < n; ++i)
         {
-            Uniform v_struct;
+            Variable v_struct;
             v_struct.name = base_name;
             v_struct.type = VarType::Struct;
 
@@ -132,7 +132,7 @@ void get_struct_uniforms(const spirv_cross::CompilerGLSL& compiler,
                 }
                 else
                 {
-                    Uniform unif;
+                    Variable unif;
 
                     unif.name = full_name;
                     unif.type = parse_spir_type(sub_type);
@@ -151,7 +151,7 @@ void get_struct_uniforms(const spirv_cross::CompilerGLSL& compiler,
     }
     else
     {
-        Uniform v_struct;
+        Variable v_struct;
         v_struct.name = base_name;
         v_struct.type = VarType::Struct;
 
@@ -168,7 +168,7 @@ void get_struct_uniforms(const spirv_cross::CompilerGLSL& compiler,
             }
             else if (!sub_type.array.empty())
             {
-                Uniform v_array;
+                Variable v_array;
                 v_array.name = name;
                 v_array.type = VarType::Array;
 
@@ -176,7 +176,7 @@ void get_struct_uniforms(const spirv_cross::CompilerGLSL& compiler,
                 {
                     std::string full_name = name + "[" + std::to_string(i) + "]";
 
-                    Uniform unif;
+                    Variable unif;
 
                     unif.name = full_name;
                     unif.type = parse_spir_type(sub_type);
@@ -188,7 +188,7 @@ void get_struct_uniforms(const spirv_cross::CompilerGLSL& compiler,
             }
             else
             {
-                Uniform unif;
+                Variable unif;
 
                 unif.name = name;
                 unif.type = parse_spir_type(sub_type);
@@ -211,7 +211,7 @@ namespace shadertrans
 {
 
 void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv, 
-	                               std::vector<Uniform>& uniforms)
+	                               std::vector<Variable>& uniforms)
 {
     spirv_cross::CompilerGLSL compiler(spirv);
     spirv_cross::ShaderResources resources = compiler.get_shader_resources();
@@ -245,7 +245,7 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 
 	for (auto& resource : resources.sampled_images)
 	{
-		Uniform unif;
+		Variable unif;
 
 		spirv_cross::SPIRType type = compiler.get_type(resource.base_type_id);
 
@@ -278,7 +278,7 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 		//unif.type = VariableType::Sampler2D;
 		//m_uniforms.push_back(unif);
         
-        Uniform unif;
+        Variable unif;
 
         unif.name = compiler.get_name(resource.id);
 

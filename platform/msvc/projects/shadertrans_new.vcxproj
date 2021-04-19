@@ -24,10 +24,15 @@
     <ClCompile Include="..\..\..\source\CompilerDX.cpp" />
     <ClCompile Include="..\..\..\source\GLSLangAdapter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderInfo.cpp" />
+    <ClCompile Include="..\..\..\source\ShaderLink.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParser.cpp" />
     <ClCompile Include="..\..\..\source\ShaderReflection.cpp" />
     <ClCompile Include="..\..\..\source\ShaderTrans.cpp" />
     <ClCompile Include="..\..\..\source\ShaderValidator.cpp" />
+    <ClCompile Include="..\..\..\source\SpirvTools.cpp" />
+    <ClCompile Include="..\..\..\source\spirv_IR.cpp" />
+    <ClCompile Include="..\..\..\source\spirv_Linker.cpp" />
+    <ClCompile Include="..\..\..\source\spirv_Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\external\SPIRV-Reflect\spirv_reflect.h" />
@@ -36,11 +41,16 @@
     <ClInclude Include="..\..\..\include\shadertrans\ConfigGLSL.h" />
     <ClInclude Include="..\..\..\include\shadertrans\GLSLangAdapter.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderInfo.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderLink.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderParser.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderReflection.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderStage.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderTrans.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderValidator.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\SpirvTools.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\spirv_IR.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\spirv_Linker.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\spirv_Parser.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>shadertrans</ProjectName>
@@ -122,13 +132,15 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <PreprocessorDefinitions>_DEBUG;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;SPVGENTWO_LOGGING=1</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>../../../include;../../../external/glslang;../../../external/SPIRV-Reflect;../../../external/SPIRV-Tools;../../../external/SPIRV-Tools/include;../../../external/SPIRV-Headers/include;../../../external/SPIRV-Cross;../../../external/DirectXShaderCompiler/include;../../../external/SpvGenTwo/lib/include;../../../external/SpvGenTwo/common/include;../../../../shaderlink\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;SPVGENTWO_LOGGING=1</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

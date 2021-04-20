@@ -52,13 +52,128 @@ ShaderLink::ShaderLink()
 	m_logger = std::make_unique<spvgentwo::ConsoleLogger>();
 	m_alloc = std::make_unique<spvgentwo::HeapAllocator>();
 	m_gram = std::make_unique<spvgentwo::Grammar>(m_alloc.get());
+
+	InitMain();
 }
 
 ShaderLink::~ShaderLink()
 {
 }
 
-void ShaderLink::AddLibrary(ShaderStage stage, const std::string& glsl)
+spvgentwo::Instruction* ShaderLink::AddInput(const std::string& name, const std::string& type)
+{
+	spvgentwo::Instruction* ret = nullptr;
+	if (type == "float") {
+		ret = m_main->input<float>(name.c_str());
+	} else if (type == "vec2") {
+		ret = m_main->input<spvgentwo::glsl::vec2>(name.c_str());
+	} else if (type == "vec3") {
+		ret = m_main->input<spvgentwo::glsl::vec3>(name.c_str());
+	} else if (type == "vec4") {
+		ret = m_main->input<spvgentwo::glsl::vec4>(name.c_str());
+	}
+	return ret;
+}
+
+spvgentwo::Instruction* ShaderLink::AddOutput(const std::string& name, const std::string& type)
+{
+	spvgentwo::Instruction* ret = nullptr;
+	if (type == "float") {
+		ret = m_main->output<float>(name.c_str());
+	} else if (type == "vec2") {
+		ret = m_main->output<spvgentwo::glsl::vec2>(name.c_str());
+	} else if (type == "vec3") {
+		ret = m_main->output<spvgentwo::glsl::vec3>(name.c_str());
+	} else if (type == "vec4") {
+		ret = m_main->output<spvgentwo::glsl::vec4>(name.c_str());
+	}
+	return ret;
+}
+
+spvgentwo::Instruction* ShaderLink::AddUniform(const std::string& name, const std::string& type)
+{
+	spvgentwo::Instruction* ret = nullptr;
+	if (type == "float") {
+		ret = m_main->uniform<float>(name.c_str());
+	} else if (type == "vec2") {
+		ret = m_main->uniform<spvgentwo::glsl::vec2>(name.c_str());
+	} else if (type == "vec3") {
+		ret = m_main->uniform<spvgentwo::glsl::vec3>(name.c_str());
+	} else if (type == "vec4") {
+		ret = m_main->uniform<spvgentwo::glsl::vec4>(name.c_str());
+	}
+	return ret;
+}
+
+spvgentwo::Instruction* ShaderLink::ConstFloat(float x)
+{
+	return m_main->constant(x);
+}
+
+spvgentwo::Instruction* ShaderLink::ConstFloat2(float x, float y)
+{
+	return m_main->constant(spvgentwo::make_vector(x, y));
+}
+
+spvgentwo::Instruction* ShaderLink::Call(spvgentwo::Function* func, const std::vector<spvgentwo::Instruction*>& args)
+{
+	switch (args.size())
+	{
+	case 0:
+		return (*m_main_entry)->call(func);
+	case 1:
+		return (*m_main_entry)->call(func, args[0]);
+	case 2:
+		return (*m_main_entry)->call(func, args[0], args[1]);
+	case 3:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2]);
+	case 4:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3]);
+	case 5:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4]);
+	case 6:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5]);
+	case 7:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+	case 8:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+	case 9:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
+	case 10:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+	case 11:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10]);
+	case 12:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]);
+	case 13:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12]);
+	case 14:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13]);
+	case 15:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14]);
+	case 16:
+		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15]);
+	default:
+		return nullptr;
+	}
+}
+
+spvgentwo::Instruction* ShaderLink::AccessChain(spvgentwo::Instruction* base, unsigned int index)
+{
+	return (*m_main_entry)->opAccessChain(base, index);
+}
+
+void ShaderLink::Store(spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
+{
+	(*m_main_entry)->opStore(dst, src);
+}
+
+void ShaderLink::Return()
+{
+	(*m_main_entry)->opReturn();
+}
+
+std::shared_ptr<spvgentwo::Module> ShaderLink::AddLibrary(ShaderStage stage, const std::string& glsl)
 {
     std::vector<unsigned int> spv;
     ShaderTrans::GLSL2SpirV(stage, glsl, spv, true);
@@ -78,10 +193,6 @@ void ShaderLink::AddLibrary(ShaderStage stage, const std::string& glsl)
     module->reconstructTypeAndConstantInfo();
     module->reconstructNames();
 
-	auto& func = module->getFunctions().front();
-	auto name = "entry_point" + std::to_string(m_libs.size());
-	spvgentwo::LinkerHelper::addLinkageDecoration(func.getFunction(), spvgentwo::spv::LinkageType::Export, name.c_str());
-
 	// clear entry points
 	module->getEntryPoints().clear();
 	module->getExecutionModes().clear();
@@ -93,12 +204,64 @@ void ShaderLink::AddLibrary(ShaderStage stage, const std::string& glsl)
 	//Print(*module);
 
 	m_libs.push_back(module);
+
+	return module;
 }
 
-void ShaderLink::Link()
+spvgentwo::Function* ShaderLink::GetEntryFunc(spvgentwo::Module& lib)
 {
-	InitConsumer();
+	return &lib.getFunctions().front();
+}
 
+spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Function* func) const
+{
+	spvgentwo::Function& dst = m_main->addFunction();
+
+	dst.setReturnType(m_main->addType(func->getReturnType()));
+	for (auto& p : func->getParameters()) {
+		dst.addParameters(m_main->addType(*p.getType()));
+	}
+
+	dst.finalize(func->getFunctionControl(), func->getName());
+
+	return &dst;
+}
+
+void ShaderLink::AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export) const
+{
+	spvgentwo::spv::LinkageType type = is_export ? spvgentwo::spv::LinkageType::Export : spvgentwo::spv::LinkageType::Import;
+	spvgentwo::LinkerHelper::addLinkageDecoration(func->getFunction(), type, name.c_str());
+}
+
+void ShaderLink::ImportAll()
+{
+	auto printer = spvgentwo::ModulePrinter::ModuleSimpleFuncPrinter([](const char* str) {
+		printf("%s", str);
+
+#ifdef _WIN32
+		OutputDebugStringA(str);
+#endif
+		});
+
+	spvgentwo::LinkerHelper::LinkerOptions options{};
+	options.flags = spvgentwo::LinkerHelper::LinkerOptionBits::All;
+	options.grammar = m_gram.get();
+	options.printer = &printer;
+	options.allocator = m_alloc.get();
+
+	for (auto& m : m_libs) {
+		spvgentwo::LinkerHelper::import(*m, *m_main, options);
+	}
+}
+
+void ShaderLink::FinishMain()
+{
+	m_main->finalizeEntryPoints();
+	m_main->assignIDs(m_gram.get());
+}
+
+std::string ShaderLink::Link()
+{
 	const spvtools::MessageConsumer consumer = [](spv_message_level_t level,
         const char*,
         const spv_position_t& position,
@@ -135,7 +298,7 @@ void ShaderLink::Link()
 	{
 		std::vector<unsigned int> spv;
 		spvgentwo::BinaryVectorWriter writer(spv);
-		m_consumer->write(writer);
+		m_main->write(writer);
 		contents.emplace_back(spv);
 	}
 
@@ -148,77 +311,28 @@ void ShaderLink::Link()
 
 	std::string glsl;
 	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
-	printf("%s\n", glsl.c_str());
+	//printf("%s\n", glsl.c_str());
 
 	//std::string dis;
 	//SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
 	//printf("%s\n", dis.c_str());
+
+	return glsl;
 }
 
-
-void ShaderLink::InitConsumer()
+void ShaderLink::InitMain()
 {
-	m_consumer = std::make_unique<spvgentwo::Module>(m_alloc.get(), spvgentwo::spv::AddressingModel::Logical,
+	m_main = std::make_unique<spvgentwo::Module>(m_alloc.get(), spvgentwo::spv::AddressingModel::Logical,
 		spvgentwo::spv::MemoryModel::GLSL450, m_logger.get());
 
 	// configure capabilities and extensions
-	m_consumer->addCapability(spvgentwo::spv::Capability::Shader);
-	m_consumer->addCapability(spvgentwo::spv::Capability::Linkage);
+	m_main->addCapability(spvgentwo::spv::Capability::Shader);
+	m_main->addCapability(spvgentwo::spv::Capability::Linkage);
 
-	auto printer = spvgentwo::ModulePrinter::ModuleSimpleFuncPrinter([](const char* str) {
-		printf("%s", str);
+	spvgentwo::EntryPoint& entry = m_main->addEntryPoint(spvgentwo::spv::ExecutionModel::Fragment, u8"main");
+	entry.addExecutionMode(spvgentwo::spv::ExecutionMode::OriginUpperLeft);
 
-#ifdef _WIN32
-		OutputDebugStringA(str);
-#endif
-	});
-
-	spvgentwo::LinkerHelper::LinkerOptions options{};
-	options.flags = spvgentwo::LinkerHelper::LinkerOptionBits::All;
-	options.grammar = m_gram.get();
-	options.printer = &printer;
-	options.allocator = m_alloc.get();
-
-	for (auto& m : m_libs) {
-		spvgentwo::LinkerHelper::import(*m, *m_consumer, options);
-	}
-
-	auto& func0 = CreateFuncSign(m_libs[0]->getFunctions().front());
-	auto& func1 = CreateFuncSign(m_libs[1]->getFunctions().front());
-
-	spvgentwo::LinkerHelper::addLinkageDecoration(func0.getFunction(), spvgentwo::spv::LinkageType::Import, "entry_point0");
-	spvgentwo::LinkerHelper::addLinkageDecoration(func1.getFunction(), spvgentwo::spv::LinkageType::Import, "entry_point1");
-
-	// out vec4 frag_out;
-	spvgentwo::Type type = m_consumer->newType();
-	type.VectorElement(4).Float();
-	spvgentwo::Instruction* out_frag_out = m_consumer->output(type, u8"frag_out");
-
-	// void main();
-	{
-		spvgentwo::EntryPoint& entry = m_consumer->addEntryPoint(spvgentwo::spv::ExecutionModel::Fragment, u8"main");
-		entry.addExecutionMode(spvgentwo::spv::ExecutionMode::OriginUpperLeft);
-		spvgentwo::BasicBlock& bb = *entry;
-
-		spvgentwo::Instruction* uv = m_consumer->constant(spvgentwo::make_vector(0.f, 0.f));
-		spvgentwo::Instruction* width = m_consumer->constant(0.f);
-		spvgentwo::Instruction* height = m_consumer->constant(0.f);
-
-		spvgentwo::Instruction* col0 = bb->call(&func0, uv, width, height);
-		auto out_x = bb->opAccessChain(out_frag_out, 0u);
-		bb->opStore(out_x, col0);
-
-		spvgentwo::Instruction* col1 = bb->call(&func1, uv, width, height);
-		auto out_y = bb->opAccessChain(out_frag_out, 1u);
-		bb->opStore(out_y, col1);
-
-		entry->opReturn();
-	}
-
-	m_consumer->finalizeEntryPoints();
-	m_consumer->assignIDs(m_gram.get());
-
-	Print(*m_consumer);
+	m_main_entry = &entry;
 }
 
 void ShaderLink::Print(const spvgentwo::Module& module) const
@@ -234,20 +348,6 @@ void ShaderLink::Print(const spvgentwo::Module& module) const
 	std::string dis;
 	SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
 	printf("%s\n", dis.c_str());
-}
-
-spvgentwo::Function& ShaderLink::CreateFuncSign(const spvgentwo::Function& src) const
-{
-	spvgentwo::Function& dst = m_consumer->addFunction();
-
-	dst.setReturnType(m_consumer->addType(src.getReturnType()));
-	for (auto& p : src.getParameters()) {
-		dst.addParameters(m_consumer->addType(*p.getType()));
-	}
-
-	dst.finalize(src.getFunctionControl(), src.getName());
-
-	return dst;
 }
 
 }

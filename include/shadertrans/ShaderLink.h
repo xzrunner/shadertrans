@@ -32,8 +32,16 @@ public:
 
 	spvgentwo::Instruction* ConstFloat(float x);
 	spvgentwo::Instruction* ConstFloat2(float x, float y);
+	spvgentwo::Instruction* ConstFloat3(float x, float y, float z);
+	spvgentwo::Instruction* ConstFloat4(float x, float y, float z, float w);
 	spvgentwo::Instruction* Call(spvgentwo::Function* func, const std::vector<spvgentwo::Instruction*>& args);
 	spvgentwo::Instruction* AccessChain(spvgentwo::Instruction* base, unsigned int index);
+	spvgentwo::Instruction* ComposeFloat2(spvgentwo::Instruction* x, spvgentwo::Instruction* y);
+	spvgentwo::Instruction* ComposeFloat3(spvgentwo::Instruction* x, spvgentwo::Instruction* y,
+		spvgentwo::Instruction* z);
+	spvgentwo::Instruction* ComposeFloat4(spvgentwo::Instruction* x, spvgentwo::Instruction* y,
+		spvgentwo::Instruction* z, spvgentwo::Instruction* w);
+	spvgentwo::Instruction* ComposeFloat4(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	void Store(spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 	void Return();
 

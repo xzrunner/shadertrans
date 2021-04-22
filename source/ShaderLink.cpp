@@ -115,6 +115,16 @@ spvgentwo::Instruction* ShaderLink::ConstFloat2(float x, float y)
 	return m_main->constant(spvgentwo::make_vector(x, y));
 }
 
+spvgentwo::Instruction* ShaderLink::ConstFloat3(float x, float y, float z)
+{
+	return m_main->constant(spvgentwo::make_vector(x, y, z));
+}
+
+spvgentwo::Instruction* ShaderLink::ConstFloat4(float x, float y, float z, float w)
+{
+	return m_main->constant(spvgentwo::make_vector(x, y, z, w));
+}
+
 spvgentwo::Instruction* ShaderLink::Call(spvgentwo::Function* func, const std::vector<spvgentwo::Instruction*>& args)
 {
 	switch (args.size())
@@ -161,6 +171,37 @@ spvgentwo::Instruction* ShaderLink::Call(spvgentwo::Function* func, const std::v
 spvgentwo::Instruction* ShaderLink::AccessChain(spvgentwo::Instruction* base, unsigned int index)
 {
 	return (*m_main_entry)->opAccessChain(base, index);
+}
+
+spvgentwo::Instruction* ShaderLink::ComposeFloat2(spvgentwo::Instruction* x,
+	                                              spvgentwo::Instruction* y)
+{
+	spvgentwo::Instruction* type = (*m_main_entry)->getModule()->type<spvgentwo::vector_t<float, 2>>();
+	return (*m_main_entry)->opCompositeConstruct(type, x, y);
+}
+
+spvgentwo::Instruction* ShaderLink::ComposeFloat3(spvgentwo::Instruction* x,
+	                                              spvgentwo::Instruction* y, 
+	                                              spvgentwo::Instruction* z)
+{
+	spvgentwo::Instruction* type = (*m_main_entry)->getModule()->type<spvgentwo::vector_t<float, 3>>();
+	return (*m_main_entry)->opCompositeConstruct(type, x, y, z);
+}
+
+spvgentwo::Instruction* ShaderLink::ComposeFloat4(spvgentwo::Instruction* x,
+	                                              spvgentwo::Instruction* y, 
+	                                              spvgentwo::Instruction* z,
+	                                              spvgentwo::Instruction* w)
+{
+	spvgentwo::Instruction* type = (*m_main_entry)->getModule()->type<spvgentwo::vector_t<float, 4>>();
+	return (*m_main_entry)->opCompositeConstruct(type, x, y, z, w);
+}
+
+spvgentwo::Instruction* ShaderLink::ComposeFloat4(spvgentwo::Instruction* a,
+	                                              spvgentwo::Instruction* b)
+{
+	spvgentwo::Instruction* type = (*m_main_entry)->getModule()->type<spvgentwo::vector_t<float, 4>>();
+	return (*m_main_entry)->opCompositeConstruct(type, a, b);
 }
 
 void ShaderLink::Store(spvgentwo::Instruction* dst, spvgentwo::Instruction* src)

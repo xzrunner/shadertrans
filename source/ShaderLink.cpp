@@ -249,9 +249,18 @@ std::shared_ptr<spvgentwo::Module> ShaderLink::AddLibrary(ShaderStage stage, con
 	return module;
 }
 
-spvgentwo::Function* ShaderLink::GetEntryFunc(spvgentwo::Module& lib)
+spvgentwo::Function* ShaderLink::GetFunction(spvgentwo::Module& lib, int index)
 {
-	return &lib.getFunctions().front();
+	auto& funcs = lib.getFunctions();
+	if (index < 0 || index >= funcs.size()) {
+		return nullptr;
+	} else {
+		auto itr = funcs.begin();
+		for (int i = 0; i < index; ++i) {
+			++itr;
+		}
+		return &(*itr);
+	}
 }
 
 spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Function* func) const

@@ -46,7 +46,7 @@ public:
 	void Return();
 
 	std::shared_ptr<spvgentwo::Module> AddLibrary(ShaderStage stage, const std::string& glsl);
-	spvgentwo::Function* GetEntryFunc(spvgentwo::Module& lib);
+	spvgentwo::Function* GetFunction(spvgentwo::Module& lib, int index);
 
 	spvgentwo::Function* CreateDeclFunc(spvgentwo::Function* func) const;
 	void AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export) const;

@@ -481,4 +481,17 @@ void ShaderReflection::GetFunction(const std::vector<unsigned int>& spirv,
     func.ret_type = parser_spirv_variable(f->second.ret_type, module);
 }
 
+int ShaderReflection::GetFuncIndex(const std::vector<unsigned int>& spirv, const std::string& name)
+{
+    spirv::Parser parser;
+    spirv::Module module;
+    parser.Parse(spirv, module);
+    auto f = module.functions.find(name);
+    if (f == module.functions.end()) {
+        return -1;
+    } else {
+        return f->second.index;
+    }
+}
+
 }

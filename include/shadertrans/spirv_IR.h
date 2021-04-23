@@ -31,6 +31,7 @@ struct Variable
 
 struct Function
 {
+	int index;
 	int line_start;
 	int line_end;
 	std::vector<Variable> arguments;

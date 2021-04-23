@@ -146,6 +146,7 @@ void Parser::Parse(const std::vector<unsigned int>& ir, Module& module)
 
 			fetchType(module.functions[curFunc].ret_type, type);
 			module.functions[curFunc].line_start = -1;
+			module.functions[curFunc].index = module.functions.size() - 1;
 		} break;
 		case spv::OpFunctionEnd: {
 			module.functions[curFunc].line_end = lastOpLine;

@@ -50,6 +50,8 @@ public:
 
     static void GetFunction(const std::vector<unsigned int>& spirv,
         const std::string& name, Function& func);
+    static int GetFuncIndex(const std::vector<unsigned int>& spirv,
+        const std::string& name);
 
 }; // ShaderReflection
 

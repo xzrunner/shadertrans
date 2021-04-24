@@ -42,6 +42,12 @@ public:
 	spvgentwo::Instruction* ComposeFloat4(spvgentwo::Instruction* x, spvgentwo::Instruction* y,
 		spvgentwo::Instruction* z, spvgentwo::Instruction* w);
 	spvgentwo::Instruction* ComposeFloat4(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	spvgentwo::Instruction* ComposeExtract(spvgentwo::Instruction* comp, unsigned int index);
+	spvgentwo::Instruction* Dot(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	spvgentwo::Instruction* Add(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	spvgentwo::Instruction* Sub(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	spvgentwo::Instruction* Mul(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	spvgentwo::Instruction* Div(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	void Store(spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 	void Return();
 

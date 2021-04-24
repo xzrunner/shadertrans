@@ -204,6 +204,36 @@ spvgentwo::Instruction* ShaderLink::ComposeFloat4(spvgentwo::Instruction* a,
 	return (*m_main_entry)->opCompositeConstruct(type, a, b);
 }
 
+spvgentwo::Instruction* ShaderLink::ComposeExtract(spvgentwo::Instruction* comp, unsigned int index)
+{
+	return (*m_main_entry)->opCompositeExtract(comp, index);
+}
+
+spvgentwo::Instruction* ShaderLink::Dot(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	return (*m_main_entry)->opDot(a, b);
+}
+
+spvgentwo::Instruction* ShaderLink::Add(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	return (*m_main_entry)->Add(a, b);
+}
+
+spvgentwo::Instruction* ShaderLink::Sub(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	return (*m_main_entry)->Sub(a, b);
+}
+
+spvgentwo::Instruction* ShaderLink::Mul(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	return (*m_main_entry)->Mul(a, b);
+}
+
+spvgentwo::Instruction* ShaderLink::Div(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	return (*m_main_entry)->Div(a, b);
+}
+
 void ShaderLink::Store(spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
 {
 	(*m_main_entry)->opStore(dst, src);

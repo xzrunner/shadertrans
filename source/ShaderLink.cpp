@@ -259,10 +259,7 @@ std::shared_ptr<spvgentwo::Module> ShaderLink::AddLibrary(ShaderStage stage, con
     BinaryVectorReader reader(spv);
 
     module->reset();
-    module->read(reader, *m_gram);
-    module->resolveIDs();
-    module->reconstructTypeAndConstantInfo();
-    module->reconstructNames();
+    module->readAndInit(reader, *m_gram);
 
 	// clear entry points
 	module->getEntryPoints().clear();
@@ -291,6 +288,13 @@ spvgentwo::Function* ShaderLink::GetFunction(spvgentwo::Module& lib, int index)
 		}
 		return &(*itr);
 	}
+}
+
+void ShaderLink::ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to)
+{
+	auto module = from->getModule();
+	module->replace(from, to);
+	module->assignIDs(m_gram.get());
 }
 
 spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Function* func) const

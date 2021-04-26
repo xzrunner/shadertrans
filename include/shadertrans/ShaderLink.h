@@ -56,8 +56,9 @@ public:
 
 	void ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to);
 
-	spvgentwo::Function* CreateDeclFunc(spvgentwo::Function* func) const;
-	void AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export) const;
+	spvgentwo::Module* GetMainModule() const { return m_main.get(); }
+	static spvgentwo::Function* CreateDeclFunc(spvgentwo::Module* module, spvgentwo::Function* func);
+	static void AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export);
 
 	void ImportAll();
 	void FinishMain();

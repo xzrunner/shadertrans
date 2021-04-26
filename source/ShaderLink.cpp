@@ -297,13 +297,13 @@ void ShaderLink::ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to)
 	module->assignIDs(m_gram.get());
 }
 
-spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Function* func) const
+spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Module* module, spvgentwo::Function* func)
 {
-	spvgentwo::Function& dst = m_main->addFunction();
+	spvgentwo::Function& dst = module->addFunction();
 
-	dst.setReturnType(m_main->addType(func->getReturnType()));
+	dst.setReturnType(module->addType(func->getReturnType()));
 	for (auto& p : func->getParameters()) {
-		dst.addParameters(m_main->addType(*p.getType()));
+		dst.addParameters(module->addType(*p.getType()));
 	}
 
 	dst.finalize(func->getFunctionControl(), func->getName());
@@ -311,7 +311,7 @@ spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Function* func) const
 	return &dst;
 }
 
-void ShaderLink::AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export) const
+void ShaderLink::AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export)
 {
 	spvgentwo::spv::LinkageType type = is_export ? spvgentwo::spv::LinkageType::Export : spvgentwo::spv::LinkageType::Import;
 	spvgentwo::LinkerHelper::addLinkageDecoration(func->getFunction(), type, name.c_str());

@@ -404,6 +404,24 @@ std::string ShaderLink::Link()
 	return glsl;
 }
 
+void ShaderLink::Print(const spvgentwo::Module& module, bool output_ir) const
+{
+	std::vector<unsigned int> spv;
+	spvgentwo::BinaryVectorWriter writer(spv);
+	module.write(writer);
+
+	std::string glsl;
+	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
+	printf("%s\n", glsl.c_str());
+
+	if (output_ir)
+	{
+		std::string dis;
+		SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
+		printf("%s\n", dis.c_str());
+	}
+}
+
 void ShaderLink::InitMain()
 {
 	m_main = std::make_unique<spvgentwo::Module>(m_alloc.get(), spvgentwo::spv::AddressingModel::Logical,
@@ -417,21 +435,6 @@ void ShaderLink::InitMain()
 	entry.addExecutionMode(spvgentwo::spv::ExecutionMode::OriginUpperLeft);
 
 	m_main_entry = &entry;
-}
-
-void ShaderLink::Print(const spvgentwo::Module& module) const
-{
-	std::vector<unsigned int> spv;
-	spvgentwo::BinaryVectorWriter writer(spv);
-	module.write(writer);
-
-	std::string glsl;
-	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
-	printf("%s\n", glsl.c_str());
-
-	std::string dis;
-	SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
-	printf("%s\n", dis.c_str());
 }
 
 }

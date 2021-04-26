@@ -64,10 +64,10 @@ public:
 	void FinishMain();
 	std::string Link();
 
+	void Print(const spvgentwo::Module& module, bool output_ir = false) const;
+
 private:
 	void InitMain();
-
-	void Print(const spvgentwo::Module& module) const;
 
 private:
 	std::unique_ptr<spvgentwo::ConsoleLogger> m_logger;

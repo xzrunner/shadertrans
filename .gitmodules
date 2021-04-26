@@ -18,4 +18,4 @@
 	url = git@github.com:KhronosGroup/glslang.git
 [submodule "external/SpvGenTwo"]
 	path = external/SpvGenTwo
-	url = git@github.com:rAzoR8/SpvGenTwo.git
+	url = git@github.com:xzrunner/SpvGenTwo.git

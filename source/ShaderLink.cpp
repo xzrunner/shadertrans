@@ -124,143 +124,73 @@ spvgentwo::Instruction* ShaderLink::AddUniform(const std::string& name, const st
 	return ret;
 }
 
-spvgentwo::Instruction* ShaderLink::ConstFloat(float x)
+spvgentwo::Instruction* ShaderLink::AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index)
 {
-	return m_main->constant(x);
+	return (*func)->opAccessChain(base, index);
 }
 
-spvgentwo::Instruction* ShaderLink::ConstFloat2(float x, float y)
-{
-	return m_main->constant(spvgentwo::make_vector(x, y));
-}
-
-spvgentwo::Instruction* ShaderLink::ConstFloat3(float x, float y, float z)
-{
-	return m_main->constant(spvgentwo::make_vector(x, y, z));
-}
-
-spvgentwo::Instruction* ShaderLink::ConstFloat4(float x, float y, float z, float w)
-{
-	return m_main->constant(spvgentwo::make_vector(x, y, z, w));
-}
-
-spvgentwo::Instruction* ShaderLink::Call(spvgentwo::Function* func, const std::vector<spvgentwo::Instruction*>& args)
-{
-	switch (args.size())
-	{
-	case 0:
-		return (*m_main_entry)->call(func);
-	case 1:
-		return (*m_main_entry)->call(func, args[0]);
-	case 2:
-		return (*m_main_entry)->call(func, args[0], args[1]);
-	case 3:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2]);
-	case 4:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3]);
-	case 5:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4]);
-	case 6:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5]);
-	case 7:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-	case 8:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-	case 9:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
-	case 10:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
-	case 11:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10]);
-	case 12:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]);
-	case 13:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12]);
-	case 14:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13]);
-	case 15:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14]);
-	case 16:
-		return (*m_main_entry)->call(func, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15]);
-	default:
-		return nullptr;
-	}
-}
-
-spvgentwo::Instruction* ShaderLink::AccessChain(spvgentwo::Instruction* base, unsigned int index)
-{
-	return (*m_main_entry)->opAccessChain(base, index);
-}
-
-spvgentwo::Instruction* ShaderLink::ComposeFloat2(spvgentwo::Instruction* x,
+spvgentwo::Instruction* ShaderLink::ComposeFloat2(spvgentwo::Function* func,
+	                                              spvgentwo::Instruction* x,
 	                                              spvgentwo::Instruction* y)
 {
-	spvgentwo::Instruction* type = (*m_main_entry)->getModule()->type<spvgentwo::vector_t<float, 2>>();
-	return (*m_main_entry)->opCompositeConstruct(type, x, y);
+	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 2>>();
+	return (*func)->opCompositeConstruct(type, x, y);
 }
 
-spvgentwo::Instruction* ShaderLink::ComposeFloat3(spvgentwo::Instruction* x,
+spvgentwo::Instruction* ShaderLink::ComposeFloat3(spvgentwo::Function* func, 
+	                                              spvgentwo::Instruction* x,
 	                                              spvgentwo::Instruction* y, 
 	                                              spvgentwo::Instruction* z)
 {
-	spvgentwo::Instruction* type = (*m_main_entry)->getModule()->type<spvgentwo::vector_t<float, 3>>();
-	return (*m_main_entry)->opCompositeConstruct(type, x, y, z);
+	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 3>>();
+	return (*func)->opCompositeConstruct(type, x, y, z);
 }
 
-spvgentwo::Instruction* ShaderLink::ComposeFloat4(spvgentwo::Instruction* x,
+spvgentwo::Instruction* ShaderLink::ComposeFloat4(spvgentwo::Function* func, 
+	                                              spvgentwo::Instruction* x,
 	                                              spvgentwo::Instruction* y, 
 	                                              spvgentwo::Instruction* z,
 	                                              spvgentwo::Instruction* w)
 {
-	spvgentwo::Instruction* type = (*m_main_entry)->getModule()->type<spvgentwo::vector_t<float, 4>>();
-	return (*m_main_entry)->opCompositeConstruct(type, x, y, z, w);
+	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 4>>();
+	return (*func)->opCompositeConstruct(type, x, y, z, w);
 }
 
-spvgentwo::Instruction* ShaderLink::ComposeFloat4(spvgentwo::Instruction* a,
-	                                              spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderLink::ComposeExtract(spvgentwo::Function* func,
+	                                               spvgentwo::Instruction* comp, 
+	                                               unsigned int index)
 {
-	spvgentwo::Instruction* type = (*m_main_entry)->getModule()->type<spvgentwo::vector_t<float, 4>>();
-	return (*m_main_entry)->opCompositeConstruct(type, a, b);
+	return (*func)->opCompositeExtract(comp, index);
 }
 
-spvgentwo::Instruction* ShaderLink::ComposeExtract(spvgentwo::Instruction* comp, unsigned int index)
+spvgentwo::Instruction* ShaderLink::Dot(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
-	return (*m_main_entry)->opCompositeExtract(comp, index);
+	return (*func)->opDot(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Dot(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderLink::Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
-	return (*m_main_entry)->opDot(a, b);
+	return (*func)->Add(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Add(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderLink::Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
-	return (*m_main_entry)->Add(a, b);
+	return (*func)->Sub(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Sub(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderLink::Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
-	return (*m_main_entry)->Sub(a, b);
+	return (*func)->Mul(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Mul(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderLink::Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
-	return (*m_main_entry)->Mul(a, b);
+	return (*func)->Div(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Div(spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+void ShaderLink::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
 {
-	return (*m_main_entry)->Div(a, b);
-}
-
-void ShaderLink::Store(spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
-{
-	(*m_main_entry)->opStore(dst, src);
-}
-
-void ShaderLink::Return()
-{
-	(*m_main_entry)->opReturn();
+	(*func)->opStore(dst, src);
 }
 
 std::shared_ptr<spvgentwo::Module> ShaderLink::AddLibrary(ShaderStage stage, const std::string& glsl)
@@ -295,18 +225,17 @@ std::shared_ptr<spvgentwo::Module> ShaderLink::AddLibrary(ShaderStage stage, con
 	return module;
 }
 
-spvgentwo::Function* ShaderLink::GetFunction(spvgentwo::Module& lib, int index)
+spvgentwo::Function* ShaderLink::QueryFunction(spvgentwo::Module& lib, const std::string& name)
 {
-	auto& funcs = lib.getFunctions();
-	if (index < 0 || index >= funcs.size()) {
-		return nullptr;
-	} else {
-		auto itr = funcs.begin();
-		for (int i = 0; i < index; ++i) {
-			++itr;
+	for (auto& func : lib.getFunctions()) 
+	{
+		std::string f_name = func.getName();
+		f_name = f_name.substr(0, f_name.find_first_of('('));
+		if (f_name == name) {
+			return &func;
 		}
-		return &(*itr);
 	}
+	return nullptr;
 }
 
 void ShaderLink::ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to)
@@ -356,9 +285,8 @@ spvgentwo::Instruction* ShaderLink::GetFuncParam(spvgentwo::Function* func, int 
 	return func->getParameter(index);
 }
 
-void ShaderLink::GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names) const
+void ShaderLink::GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names)
 {
-	auto printer = spvgentwo::ModulePrinter::ModuleSimpleFuncPrinter([](const char* _pStr) { printf("%s", _pStr); });
 	for (auto& param : func->getParameters()) {
 		names.push_back(param.getName());
 	}
@@ -387,15 +315,35 @@ spvgentwo::Instruction* ShaderLink::FuncCall(spvgentwo::Function* caller, spvgen
 		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6]);
 	case 8:
 		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
+	case 9:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8]);
+	case 10:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9]);
+	case 11:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10]);
+	case 12:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11]);
+	case 13:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], params[12]);
+	case 14:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], params[12], params[13]);
+	case 15:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], params[12], params[13], params[14]);
+	case 16:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], params[12], params[13], params[14], params[15]);
 	default:
 		return nullptr;
 	}
 }
 
-spvgentwo::Instruction* ShaderLink::FuncReturn(spvgentwo::Function* func, spvgentwo::Instruction* inst)
+void ShaderLink::Return(spvgentwo::Function* func)
 {
-	spvgentwo::BasicBlock& bb = *func;
-	return bb.returnValue(inst);
+	(*func)->opReturn();
+}
+
+void ShaderLink::ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* inst)
+{
+	(*func)->opReturnValue(inst);
 }
 
 spvgentwo::Instruction* ShaderLink::ConstFloat(spvgentwo::Module* module, float x)
@@ -505,7 +453,7 @@ std::string ShaderLink::Link()
 	return glsl;
 }
 
-void ShaderLink::Print(const spvgentwo::Module& module, bool output_ir) const
+void ShaderLink::Print(const spvgentwo::Module& module, bool output_ir)
 {
 	std::vector<unsigned int> spv;
 	spvgentwo::BinaryVectorWriter writer(spv);
@@ -535,7 +483,7 @@ void ShaderLink::InitMain()
 	spvgentwo::EntryPoint& entry = m_main->addEntryPoint(spvgentwo::spv::ExecutionModel::Fragment, u8"main");
 	entry.addExecutionMode(spvgentwo::spv::ExecutionMode::OriginUpperLeft);
 
-	m_main_entry = &entry;
+	m_main_func = &entry;
 }
 
 }

@@ -26,46 +26,40 @@ public:
 	ShaderLink();
 	~ShaderLink();
 
+	spvgentwo::Module* GetMainModule() const { return m_main.get(); }
+	spvgentwo::Function* GetMainFunc() const { return m_main_func; }
+
 	spvgentwo::Instruction* AddInput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddOutput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddUniform(const std::string& name, const std::string& type);
 
-	spvgentwo::Instruction* ConstFloat(float x);
-	spvgentwo::Instruction* ConstFloat2(float x, float y);
-	spvgentwo::Instruction* ConstFloat3(float x, float y, float z);
-	spvgentwo::Instruction* ConstFloat4(float x, float y, float z, float w);
-	spvgentwo::Instruction* Call(spvgentwo::Function* func, const std::vector<spvgentwo::Instruction*>& args);
-	spvgentwo::Instruction* AccessChain(spvgentwo::Instruction* base, unsigned int index);
-	spvgentwo::Instruction* ComposeFloat2(spvgentwo::Instruction* x, spvgentwo::Instruction* y);
-	spvgentwo::Instruction* ComposeFloat3(spvgentwo::Instruction* x, spvgentwo::Instruction* y,
-		spvgentwo::Instruction* z);
-	spvgentwo::Instruction* ComposeFloat4(spvgentwo::Instruction* x, spvgentwo::Instruction* y,
-		spvgentwo::Instruction* z, spvgentwo::Instruction* w);
-	spvgentwo::Instruction* ComposeFloat4(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	spvgentwo::Instruction* ComposeExtract(spvgentwo::Instruction* comp, unsigned int index);
-	spvgentwo::Instruction* Dot(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	spvgentwo::Instruction* Add(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	spvgentwo::Instruction* Sub(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	spvgentwo::Instruction* Mul(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	spvgentwo::Instruction* Div(spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	void Store(spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
-	void Return();
+	static spvgentwo::Instruction* AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index);
+	static spvgentwo::Instruction* ComposeFloat2(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
+	static spvgentwo::Instruction* ComposeFloat3(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* z);
+	static spvgentwo::Instruction* ComposeFloat4(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* z, spvgentwo::Instruction* w);
+	static spvgentwo::Instruction* ComposeExtract(spvgentwo::Function* func, spvgentwo::Instruction* comp, unsigned int index);
+	static spvgentwo::Instruction* Dot(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 
 	std::shared_ptr<spvgentwo::Module> AddLibrary(ShaderStage stage, const std::string& glsl);
-	spvgentwo::Function* GetFunction(spvgentwo::Module& lib, int index);
+	static spvgentwo::Function* QueryFunction(spvgentwo::Module& lib, const std::string& name);
 
 	void ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to);
 
-	spvgentwo::Module* GetMainModule() const { return m_main.get(); }
 	static spvgentwo::Function* CreateDeclFunc(spvgentwo::Module* module, spvgentwo::Function* func);
 	static void AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export);
 
 	static spvgentwo::Function* CreateFunc(spvgentwo::Module* module, const std::string& name, 
 		const std::string& ret, const std::vector<std::string>& args);
 	static spvgentwo::Instruction* GetFuncParam(spvgentwo::Function* func, int index);
-	void GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names) const;
+	static void GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names);
 	static spvgentwo::Instruction* FuncCall(spvgentwo::Function* caller, spvgentwo::Function* callee, const std::vector<spvgentwo::Instruction*>& params);
-	static spvgentwo::Instruction* FuncReturn(spvgentwo::Function* func, spvgentwo::Instruction* inst);
+	static void Return(spvgentwo::Function* func);
+	static void ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* inst);
 
 	static spvgentwo::Instruction* ConstFloat(spvgentwo::Module* module, float x);
 	static spvgentwo::Instruction* ConstFloat2(spvgentwo::Module* module, float x, float y);
@@ -76,7 +70,7 @@ public:
 	void FinishMain();
 	std::string Link();
 
-	void Print(const spvgentwo::Module& module, bool output_ir = false) const;
+	static void Print(const spvgentwo::Module& module, bool output_ir = false);
 
 private:
 	void InitMain();
@@ -88,7 +82,7 @@ private:
 
 	std::vector<std::shared_ptr<spvgentwo::Module>> m_libs;
 	std::unique_ptr<spvgentwo::Module> m_main = nullptr;
-	spvgentwo::EntryPoint* m_main_entry = nullptr;
+	spvgentwo::Function* m_main_func = nullptr;
 
 }; // ShaderLink
 

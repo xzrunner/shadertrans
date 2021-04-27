@@ -19,6 +19,8 @@
 #include <Windows.h>
 #endif
 
+#include <assert.h>
+
 namespace
 {
 
@@ -41,6 +43,23 @@ private:
 	U32Vector& m_vec;
 	int m_index;
 }; // BinaryVectorReader
+
+spvgentwo::Type create_type(spvgentwo::Module* module, const std::string& str)
+{
+	auto type = module->newType();
+	if (str == "float") {
+		type.Float();
+	} else if (str == "vec2") {
+		type.VectorElement(2).Float();
+	} else if (str == "vec3") {
+		type.VectorElement(3).Float();
+	} else if (str == "vec4") {
+		type.VectorElement(4).Float();
+	} else {
+		assert(0);
+	}
+	return type;
+}
 
 }
 
@@ -315,6 +334,88 @@ void ShaderLink::AddLinkDecl(spvgentwo::Function* func, const std::string& name,
 {
 	spvgentwo::spv::LinkageType type = is_export ? spvgentwo::spv::LinkageType::Export : spvgentwo::spv::LinkageType::Import;
 	spvgentwo::LinkerHelper::addLinkageDecoration(func->getFunction(), type, name.c_str());
+}
+
+spvgentwo::Function* ShaderLink::CreateFunc(spvgentwo::Module* module, const std::string& name, 
+	                                        const std::string& ret, const std::vector<std::string>& args)
+{
+	auto& func = module->addFunction();
+	
+	func.setReturnType(module->addType(create_type(module, ret)));
+	for (auto& arg : args) {
+		func.addParameters(module->addType(create_type(module, arg)));
+	}
+	func.finalize(spvgentwo::spv::FunctionControlMask::Const, name.c_str());
+	func.addBasicBlock("FunctionEntry");
+
+	return &func;
+}
+
+spvgentwo::Instruction* ShaderLink::GetFuncParam(spvgentwo::Function* func, int index)
+{
+	return func->getParameter(index);
+}
+
+void ShaderLink::GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names) const
+{
+	auto printer = spvgentwo::ModulePrinter::ModuleSimpleFuncPrinter([](const char* _pStr) { printf("%s", _pStr); });
+	for (auto& param : func->getParameters()) {
+		names.push_back(param.getName());
+	}
+}
+
+spvgentwo::Instruction* ShaderLink::FuncCall(spvgentwo::Function* caller, spvgentwo::Function* callee, const std::vector<spvgentwo::Instruction*>& params)
+{
+	spvgentwo::BasicBlock& bb = *caller;
+	switch (params.size())
+	{
+	case 0:
+		return bb->call(callee);
+	case 1:
+		return bb->call(callee, params[0]);
+	case 2:
+		return bb->call(callee, params[0], params[1]);
+	case 3:
+		return bb->call(callee, params[0], params[1], params[2]);
+	case 4:
+		return bb->call(callee, params[0], params[1], params[2], params[3]);
+	case 5:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4]);
+	case 6:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5]);
+	case 7:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6]);
+	case 8:
+		return bb->call(callee, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
+	default:
+		return nullptr;
+	}
+}
+
+spvgentwo::Instruction* ShaderLink::FuncReturn(spvgentwo::Function* func, spvgentwo::Instruction* inst)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	return bb.returnValue(inst);
+}
+
+spvgentwo::Instruction* ShaderLink::ConstFloat(spvgentwo::Module* module, float x)
+{
+	return module->constant(x);
+}
+
+spvgentwo::Instruction* ShaderLink::ConstFloat2(spvgentwo::Module* module, float x, float y)
+{
+	return module->constant(spvgentwo::make_vector(x, y));
+}
+
+spvgentwo::Instruction* ShaderLink::ConstFloat3(spvgentwo::Module* module, float x, float y, float z)
+{
+	return module->constant(spvgentwo::make_vector(x, y, z));
+}
+
+spvgentwo::Instruction* ShaderLink::ConstFloat4(spvgentwo::Module* module, float x, float y, float z, float w)
+{
+	return module->constant(spvgentwo::make_vector(x, y, z, w));
 }
 
 void ShaderLink::ImportAll()

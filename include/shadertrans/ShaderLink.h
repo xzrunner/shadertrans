@@ -60,6 +60,18 @@ public:
 	static spvgentwo::Function* CreateDeclFunc(spvgentwo::Module* module, spvgentwo::Function* func);
 	static void AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export);
 
+	static spvgentwo::Function* CreateFunc(spvgentwo::Module* module, const std::string& name, 
+		const std::string& ret, const std::vector<std::string>& args);
+	static spvgentwo::Instruction* GetFuncParam(spvgentwo::Function* func, int index);
+	void GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names) const;
+	static spvgentwo::Instruction* FuncCall(spvgentwo::Function* caller, spvgentwo::Function* callee, const std::vector<spvgentwo::Instruction*>& params);
+	static spvgentwo::Instruction* FuncReturn(spvgentwo::Function* func, spvgentwo::Instruction* inst);
+
+	static spvgentwo::Instruction* ConstFloat(spvgentwo::Module* module, float x);
+	static spvgentwo::Instruction* ConstFloat2(spvgentwo::Module* module, float x, float y);
+	static spvgentwo::Instruction* ConstFloat3(spvgentwo::Module* module, float x, float y, float z);
+	static spvgentwo::Instruction* ConstFloat4(spvgentwo::Module* module, float x, float y, float z, float w);
+
 	void ImportAll();
 	void FinishMain();
 	std::string Link();

@@ -204,8 +204,14 @@ void ShaderLink::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, s
 	(*func)->opStore(dst, src);
 }
 
-std::shared_ptr<spvgentwo::Module> ShaderLink::AddModule(ShaderStage stage, const std::string& glsl)
+std::shared_ptr<spvgentwo::Module> ShaderLink::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)
 {
+	for (auto& itr : m_modules) {
+		if (itr.first == name) {
+			return itr.second;
+		}
+	}
+
     std::vector<unsigned int> spv;
     ShaderTrans::GLSL2SpirV(stage, glsl, spv, true);
 
@@ -231,7 +237,7 @@ std::shared_ptr<spvgentwo::Module> ShaderLink::AddModule(ShaderStage stage, cons
 
 	//Print(*module);
 
-	m_modules.push_back(module);
+	m_modules.push_back(std::make_pair(name, module));
 
 	return module;
 }
@@ -272,8 +278,16 @@ spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Module* module, spvge
 
 void ShaderLink::AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export)
 {
+	if (is_export && m_added_export_link_decl.find(name) != m_added_export_link_decl.end()) {
+		return;
+	}
+
 	spvgentwo::spv::LinkageType type = is_export ? spvgentwo::spv::LinkageType::Export : spvgentwo::spv::LinkageType::Import;
 	spvgentwo::LinkerHelper::addLinkageDecoration(func->getFunction(), type, name.c_str());
+
+	if (is_export) {
+		m_added_export_link_decl.insert(name);
+	}
 }
 
 spvgentwo::Function* ShaderLink::CreateFunc(spvgentwo::Module* module, const std::string& name, 
@@ -414,8 +428,8 @@ void ShaderLink::ImportAll()
 	options.printer = &printer;
 	options.allocator = m_alloc.get();
 
-	for (auto& m : m_modules) {
-		spvgentwo::LinkerHelper::import(*m, *m_main, options);
+	for (auto& itr : m_modules) {
+		spvgentwo::LinkerHelper::import(*itr.second, *m_main, options);
 	}
 }
 
@@ -427,6 +441,8 @@ void ShaderLink::FinishMain()
 
 std::string ShaderLink::Link()
 {
+	m_added_export_link_decl.clear();
+
 	const spvtools::MessageConsumer consumer = [](spv_message_level_t level,
         const char*,
         const spv_position_t& position,
@@ -453,11 +469,11 @@ std::string ShaderLink::Link()
 	context.SetMessageConsumer(consumer);
 
     std::vector<std::vector<unsigned int>> contents;
-    for (auto& m : m_modules) 
+    for (auto& itr : m_modules) 
 	{
 		std::vector<unsigned int> spv;
 		spvgentwo::BinaryVectorWriter writer(spv);
-		m->write(writer);
+		itr.second->write(writer);
         contents.emplace_back(spv);
     }
 	{

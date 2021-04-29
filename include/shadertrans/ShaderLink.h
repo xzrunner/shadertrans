@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <set>
 
 namespace spvgentwo 
 { 
@@ -46,13 +47,13 @@ public:
 	static spvgentwo::Instruction* Negate(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 
-	std::shared_ptr<spvgentwo::Module> AddModule(ShaderStage stage, const std::string& glsl);
+	std::shared_ptr<spvgentwo::Module> AddModule(ShaderStage stage, const std::string& glsl, const std::string& name);
 	static spvgentwo::Function* QueryFunction(spvgentwo::Module& lib, const std::string& name);
 
 	void ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to);
 
 	static spvgentwo::Function* CreateDeclFunc(spvgentwo::Module* module, spvgentwo::Function* func);
-	static void AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export);
+	void AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export);
 
 	static spvgentwo::Function* CreateFunc(spvgentwo::Module* module, const std::string& name, 
 		const std::string& ret, const std::vector<std::string>& args);
@@ -85,9 +86,11 @@ private:
 	std::unique_ptr<spvgentwo::HeapAllocator> m_alloc;
 	std::unique_ptr<spvgentwo::Grammar> m_gram;
 
-	std::vector<std::shared_ptr<spvgentwo::Module>> m_modules;
+	std::vector<std::pair<std::string, std::shared_ptr<spvgentwo::Module>>> m_modules;
 	std::unique_ptr<spvgentwo::Module> m_main = nullptr;
 	spvgentwo::Function* m_main_func = nullptr;
+
+	std::set<std::string> m_added_export_link_decl;
 
 }; // ShaderLink
 

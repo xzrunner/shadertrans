@@ -66,6 +66,10 @@ public:
 	static spvgentwo::Instruction* ConstFloat3(spvgentwo::Module* module, float x, float y, float z);
 	static spvgentwo::Instruction* ConstFloat4(spvgentwo::Module* module, float x, float y, float z, float w);
 
+	static spvgentwo::Instruction* ConstMatrix2(spvgentwo::Module* module, const float m[4]);
+	static spvgentwo::Instruction* ConstMatrix3(spvgentwo::Module* module, const float m[9]);
+	static spvgentwo::Instruction* ConstMatrix4(spvgentwo::Module* module, const float m[16]);
+
 	void ImportAll();
 	void FinishMain();
 	std::string Link();

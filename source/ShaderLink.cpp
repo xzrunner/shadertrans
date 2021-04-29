@@ -366,6 +366,27 @@ spvgentwo::Instruction* ShaderLink::ConstFloat4(spvgentwo::Module* module, float
 	return module->constant(spvgentwo::make_vector(x, y, z, w));
 }
 
+spvgentwo::Instruction* ShaderLink::ConstMatrix2(spvgentwo::Module* module, const float m[4])
+{
+	float m2[2][2];
+	memcpy(m2, m, sizeof(float) * 4);
+	return module->constant(spvgentwo::make_matrix(m2));
+}
+
+spvgentwo::Instruction* ShaderLink::ConstMatrix3(spvgentwo::Module* module, const float m[9])
+{
+	float m2[3][3];
+	memcpy(m2, m, sizeof(float) * 9);
+	return module->constant(spvgentwo::make_matrix(m2));
+}
+
+spvgentwo::Instruction* ShaderLink::ConstMatrix4(spvgentwo::Module* module, const float m[16])
+{
+	float m2[4][4];
+	memcpy(m2, m, sizeof(float) * 16);
+	return module->constant(spvgentwo::make_matrix(m2));
+}
+
 void ShaderLink::ImportAll()
 {
 	auto printer = spvgentwo::ModulePrinter::ModuleSimpleFuncPrinter([](const char* str) {

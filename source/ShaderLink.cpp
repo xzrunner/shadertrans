@@ -188,6 +188,17 @@ spvgentwo::Instruction* ShaderLink::Div(spvgentwo::Function* func, spvgentwo::In
 	return (*func)->Div(a, b);
 }
 
+spvgentwo::Instruction* ShaderLink::Negate(spvgentwo::Function* func, spvgentwo::Instruction* v)
+{
+	if (v->getType()->isFloat()) {
+		return (*func)->opFNegate(v);
+	} else if (v->getType()->isInt()) {
+		return (*func)->opSNegate(v);
+	} else {
+		return nullptr;
+	}
+}
+
 void ShaderLink::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
 {
 	(*func)->opStore(dst, src);

@@ -109,17 +109,17 @@ spvgentwo::Instruction* ShaderLink::AddOutput(const std::string& name, const std
 	return ret;
 }
 
-spvgentwo::Instruction* ShaderLink::AddUniform(const std::string& name, const std::string& type)
+spvgentwo::Instruction* ShaderLink::AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type)
 {
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
-		ret = m_main->uniform<float>(name.c_str());
+		ret = m_main->uniformConstant<float>(name.c_str());
 	} else if (type == "vec2") {
-		ret = m_main->uniform<spvgentwo::glsl::vec2>(name.c_str());
+		ret = m_main->uniformConstant<spvgentwo::glsl::vec2>(name.c_str());
 	} else if (type == "vec3") {
-		ret = m_main->uniform<spvgentwo::glsl::vec3>(name.c_str());
+		ret = m_main->uniformConstant<spvgentwo::glsl::vec3>(name.c_str());
 	} else if (type == "vec4") {
-		ret = m_main->uniform<spvgentwo::glsl::vec4>(name.c_str());
+		ret = m_main->uniformConstant<spvgentwo::glsl::vec4>(name.c_str());
 	}
 	return ret;
 }
@@ -202,6 +202,11 @@ spvgentwo::Instruction* ShaderLink::Negate(spvgentwo::Function* func, spvgentwo:
 void ShaderLink::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
 {
 	(*func)->opStore(dst, src);
+}
+
+spvgentwo::Instruction* ShaderLink::Load(spvgentwo::Function* func, spvgentwo::Instruction* var)
+{
+	return (*func)->opLoad(var);
 }
 
 std::shared_ptr<spvgentwo::Module> ShaderLink::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)

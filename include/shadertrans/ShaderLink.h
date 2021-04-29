@@ -32,7 +32,7 @@ public:
 
 	spvgentwo::Instruction* AddInput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddOutput(const std::string& name, const std::string& type);
-	spvgentwo::Instruction* AddUniform(const std::string& name, const std::string& type);
+	spvgentwo::Instruction* AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type);
 
 	static spvgentwo::Instruction* AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index);
 	static spvgentwo::Instruction* ComposeFloat2(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
@@ -46,6 +46,7 @@ public:
 	static spvgentwo::Instruction* Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Negate(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
+	static spvgentwo::Instruction* Load(spvgentwo::Function* func, spvgentwo::Instruction* var);
 
 	std::shared_ptr<spvgentwo::Module> AddModule(ShaderStage stage, const std::string& glsl, const std::string& name);
 	static spvgentwo::Function* QueryFunction(spvgentwo::Module& lib, const std::string& name);

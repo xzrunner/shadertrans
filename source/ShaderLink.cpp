@@ -193,7 +193,7 @@ void ShaderLink::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, s
 	(*func)->opStore(dst, src);
 }
 
-std::shared_ptr<spvgentwo::Module> ShaderLink::AddLibrary(ShaderStage stage, const std::string& glsl)
+std::shared_ptr<spvgentwo::Module> ShaderLink::AddModule(ShaderStage stage, const std::string& glsl)
 {
     std::vector<unsigned int> spv;
     ShaderTrans::GLSL2SpirV(stage, glsl, spv, true);
@@ -220,7 +220,7 @@ std::shared_ptr<spvgentwo::Module> ShaderLink::AddLibrary(ShaderStage stage, con
 
 	//Print(*module);
 
-	m_libs.push_back(module);
+	m_modules.push_back(module);
 
 	return module;
 }
@@ -403,7 +403,7 @@ void ShaderLink::ImportAll()
 	options.printer = &printer;
 	options.allocator = m_alloc.get();
 
-	for (auto& m : m_libs) {
+	for (auto& m : m_modules) {
 		spvgentwo::LinkerHelper::import(*m, *m_main, options);
 	}
 }
@@ -442,7 +442,7 @@ std::string ShaderLink::Link()
 	context.SetMessageConsumer(consumer);
 
     std::vector<std::vector<unsigned int>> contents;
-    for (auto& m : m_libs) 
+    for (auto& m : m_modules) 
 	{
 		std::vector<unsigned int> spv;
 		spvgentwo::BinaryVectorWriter writer(spv);

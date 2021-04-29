@@ -45,7 +45,7 @@ public:
 	static spvgentwo::Instruction* Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 
-	std::shared_ptr<spvgentwo::Module> AddLibrary(ShaderStage stage, const std::string& glsl);
+	std::shared_ptr<spvgentwo::Module> AddModule(ShaderStage stage, const std::string& glsl);
 	static spvgentwo::Function* QueryFunction(spvgentwo::Module& lib, const std::string& name);
 
 	void ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to);
@@ -84,7 +84,7 @@ private:
 	std::unique_ptr<spvgentwo::HeapAllocator> m_alloc;
 	std::unique_ptr<spvgentwo::Grammar> m_gram;
 
-	std::vector<std::shared_ptr<spvgentwo::Module>> m_libs;
+	std::vector<std::shared_ptr<spvgentwo::Module>> m_modules;
 	std::unique_ptr<spvgentwo::Module> m_main = nullptr;
 	spvgentwo::Function* m_main_func = nullptr;
 

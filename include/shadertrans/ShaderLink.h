@@ -33,6 +33,7 @@ public:
 	spvgentwo::Instruction* AddInput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddOutput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type);
+	int GetUniformNum() const { return m_unif_num; }
 
 	static spvgentwo::Instruction* AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index);
 	static spvgentwo::Instruction* ComposeFloat2(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
@@ -82,6 +83,8 @@ public:
 private:
 	void InitMain();
 
+	void ResetState();
+
 private:
 	std::unique_ptr<spvgentwo::ConsoleLogger> m_logger;
 	std::unique_ptr<spvgentwo::HeapAllocator> m_alloc;
@@ -91,6 +94,8 @@ private:
 	std::unique_ptr<spvgentwo::Module> m_main = nullptr;
 	spvgentwo::Function* m_main_func = nullptr;
 
+	// state
+	int m_unif_num = 0;
 	std::set<std::string> m_added_export_link_decl;
 
 }; // ShaderLink

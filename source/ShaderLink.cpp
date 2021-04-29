@@ -122,6 +122,8 @@ spvgentwo::Instruction* ShaderLink::AddUniform(spvgentwo::Module* module, const 
 		ret = m_main->uniformConstant<spvgentwo::glsl::vec3>(name.c_str());
 	} else if (type == "vec4") {
 		ret = m_main->uniformConstant<spvgentwo::glsl::vec4>(name.c_str());
+	if (ret) {
+		++m_unif_num;
 	}
 	return ret;
 }
@@ -448,7 +450,7 @@ void ShaderLink::FinishMain()
 
 std::vector<uint32_t> ShaderLink::Link()
 {
-	m_added_export_link_decl.clear();
+	ResetState();
 
 	const spvtools::MessageConsumer consumer = [](spv_message_level_t level,
         const char*,
@@ -538,6 +540,12 @@ void ShaderLink::InitMain()
 	entry.addExecutionMode(spvgentwo::spv::ExecutionMode::OriginUpperLeft);
 
 	m_main_func = &entry;
+}
+
+void ShaderLink::ResetState()
+{
+	m_unif_num = 0;
+	m_added_export_link_decl.clear();
 }
 
 }

@@ -115,13 +115,14 @@ spvgentwo::Instruction* ShaderLink::AddUniform(spvgentwo::Module* module, const 
 {
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
-		ret = m_main->uniformConstant<float>(name.c_str());
+		ret = module->uniformConstant<float>(name.c_str());
 	} else if (type == "vec2") {
-		ret = m_main->uniformConstant<spvgentwo::glsl::vec2>(name.c_str());
+		ret = module->uniformConstant<spvgentwo::glsl::vec2>(name.c_str());
 	} else if (type == "vec3") {
-		ret = m_main->uniformConstant<spvgentwo::glsl::vec3>(name.c_str());
+		ret = module->uniformConstant<spvgentwo::glsl::vec3>(name.c_str());
 	} else if (type == "vec4") {
-		ret = m_main->uniformConstant<spvgentwo::glsl::vec4>(name.c_str());
+		ret = module->uniformConstant<spvgentwo::glsl::vec4>(name.c_str());
+	}
 	if (ret) {
 		++m_unif_num;
 	}

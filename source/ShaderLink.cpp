@@ -21,6 +21,8 @@
 
 #include <assert.h>
 
+//#define SHADER_DEBUG_PRINT
+
 namespace
 {
 
@@ -444,7 +446,7 @@ void ShaderLink::FinishMain()
 	m_main->assignIDs(m_gram.get());
 }
 
-std::string ShaderLink::Link()
+std::vector<uint32_t> ShaderLink::Link()
 {
 	m_added_export_link_decl.clear();
 
@@ -492,18 +494,17 @@ std::string ShaderLink::Link()
 
 	std::vector<uint32_t> spv;
 	spv_result_t status = spvtools::Link(context, contents, &spv, options);
-
-	//////////////////////////////////////////////////////////////////////////////
-
+#ifdef SHADER_DEBUG_PRINT
 	std::string glsl;
 	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
-	//printf("%s\n", glsl.c_str());
+	printf("%s\n", glsl.c_str());
 
 	//std::string dis;
 	//SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
 	//printf("%s\n", dis.c_str());
+#endif // SHADER_DEBUG_PRINT
 
-	return glsl;
+	return spv;
 }
 
 void ShaderLink::Print(const spvgentwo::Module& module, bool output_ir)

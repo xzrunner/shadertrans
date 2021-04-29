@@ -75,7 +75,7 @@ public:
 
 	void ImportAll();
 	void FinishMain();
-	std::string Link();
+	std::vector<uint32_t> Link();
 
 	static void Print(const spvgentwo::Module& module, bool output_ir = false);
 

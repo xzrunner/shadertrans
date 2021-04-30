@@ -70,11 +70,19 @@ void Parser::Parse(const std::vector<unsigned int>& ir, Module& module)
 		var.base_type = var.type;
 			
 		if (var.type == ValueType::Struct)
+		{
 			var.type_name = names[info.second];
-		else if (var.type == ValueType::Vector || var.type == ValueType::Matrix) {
+		}
+		else if (var.type == ValueType::Vector) 
+		{
 			var.type_comp_count = info.second & 0x00ffffff;
 			var.base_type = (ValueType)((info.second & 0xff000000) >> 24);
 		} 
+		else if (var.type == ValueType::Matrix)
+		{
+			var.type_comp_count = info.second & 0x00ffffff;
+			var.base_type = ValueType::Matrix;
+		}
 	};
 
 	for (int i = 5; i < ir.size();) {

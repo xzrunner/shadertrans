@@ -48,6 +48,7 @@ public:
 	static spvgentwo::Instruction* Negate(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 	static spvgentwo::Instruction* Load(spvgentwo::Function* func, spvgentwo::Instruction* var);
+	static spvgentwo::Instruction* ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv);
 
 	std::shared_ptr<spvgentwo::Module> AddModule(ShaderStage stage, const std::string& glsl, const std::string& name);
 	static spvgentwo::Function* QueryFunction(spvgentwo::Module& lib, const std::string& name);

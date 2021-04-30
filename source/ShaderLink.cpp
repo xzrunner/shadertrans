@@ -122,6 +122,10 @@ spvgentwo::Instruction* ShaderLink::AddUniform(spvgentwo::Module* module, const 
 		ret = module->uniformConstant<spvgentwo::glsl::vec3>(name.c_str());
 	} else if (type == "vec4") {
 		ret = module->uniformConstant<spvgentwo::glsl::vec4>(name.c_str());
+	} else if (type == "texture") {
+		spvgentwo::dyn_sampled_image_t img{ spvgentwo::spv::Op::OpTypeFloat };
+		img.imageType.depth = 0;
+		ret = module->uniformConstant(name.c_str(), img);
 	}
 	if (ret) {
 		++m_unif_num;
@@ -212,6 +216,11 @@ void ShaderLink::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, s
 spvgentwo::Instruction* ShaderLink::Load(spvgentwo::Function* func, spvgentwo::Instruction* var)
 {
 	return (*func)->opLoad(var);
+}
+
+spvgentwo::Instruction* ShaderLink::ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv)
+{
+	return (*func)->opImageSampleImplictLod(img, uv);
 }
 
 std::shared_ptr<spvgentwo::Module> ShaderLink::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)

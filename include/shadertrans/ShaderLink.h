@@ -66,6 +66,11 @@ public:
 	static void Return(spvgentwo::Function* func);
 	static void ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* inst);
 
+	static spvgentwo::Instruction* VariableFloat(spvgentwo::Function* func);
+	static spvgentwo::Instruction* VariableFloat2(spvgentwo::Function* func);
+	static spvgentwo::Instruction* VariableFloat3(spvgentwo::Function* func);
+	static spvgentwo::Instruction* VariableFloat4(spvgentwo::Function* func);
+
 	static spvgentwo::Instruction* ConstFloat(spvgentwo::Module* module, float x);
 	static spvgentwo::Instruction* ConstFloat2(spvgentwo::Module* module, float x, float y);
 	static spvgentwo::Instruction* ConstFloat3(spvgentwo::Module* module, float x, float y, float z);
@@ -78,6 +83,7 @@ public:
 	void ImportAll();
 	void FinishMain();
 	std::vector<uint32_t> Link();
+	std::string ConnectCSMain(const std::string& glsl);
 
 	static void Print(const spvgentwo::Module& module, bool output_ir = false);
 

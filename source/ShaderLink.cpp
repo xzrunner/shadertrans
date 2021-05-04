@@ -390,6 +390,26 @@ void ShaderLink::ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* 
 	(*func)->opReturnValue(inst);
 }
 
+spvgentwo::Instruction* ShaderLink::VariableFloat(spvgentwo::Function* func)
+{
+	return func->variable<float>();
+}
+
+spvgentwo::Instruction* ShaderLink::VariableFloat2(spvgentwo::Function* func)
+{
+	return func->variable<spvgentwo::glsl::vec2>();
+}
+
+spvgentwo::Instruction* ShaderLink::VariableFloat3(spvgentwo::Function* func)
+{
+	return func->variable<spvgentwo::glsl::vec3>();
+}
+
+spvgentwo::Instruction* ShaderLink::VariableFloat4(spvgentwo::Function* func)
+{
+	return func->variable<spvgentwo::glsl::vec4>();
+}
+
 spvgentwo::Instruction* ShaderLink::ConstFloat(spvgentwo::Module* module, float x)
 {
 	return module->constant(x);
@@ -511,12 +531,28 @@ std::vector<uint32_t> ShaderLink::Link()
 	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
 	printf("%s\n", glsl.c_str());
 
-	//std::string dis;
-	//SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
-	//printf("%s\n", dis.c_str());
+	std::string dis;
+	SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
+	printf("%s\n", dis.c_str());
 #endif // SHADER_DEBUG_PRINT
 
 	return spv;
+}
+
+std::string ShaderLink::ConnectCSMain(const std::string& main_glsl)
+{
+	auto spv = Link();
+	
+	std::string glsl;
+	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
+
+	std::string ret = "#version 430\n";
+	auto b_pos = glsl.find_first_of('\n');
+	auto e_pos = glsl.find("void main()");
+	ret += glsl.substr(b_pos, e_pos - b_pos);
+	ret += main_glsl;
+	
+	return ret;
 }
 
 void ShaderLink::Print(const spvgentwo::Module& module, bool output_ir)

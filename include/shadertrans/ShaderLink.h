@@ -46,6 +46,7 @@ public:
 	static spvgentwo::Instruction* Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Negate(spvgentwo::Function* func, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
 	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 	static spvgentwo::Instruction* Load(spvgentwo::Function* func, spvgentwo::Instruction* var);
 	static spvgentwo::Instruction* ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv);

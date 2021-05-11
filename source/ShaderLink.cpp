@@ -7,6 +7,7 @@
 #include <spvgentwo/Grammar.h>
 #include <spvgentwo/Templates.h>
 #include <spvgentwo/TypeAlias.h>
+#include <spvgentwo/GLSL450Instruction.h>
 #include <common/ConsoleLogger.h>
 #include <common/HeapAllocator.h>
 #include <common/LinkerHelper.h>
@@ -206,6 +207,12 @@ spvgentwo::Instruction* ShaderLink::Negate(spvgentwo::Function* func, spvgentwo:
 	} else {
 		return nullptr;
 	}
+}
+
+spvgentwo::Instruction* ShaderLink::Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	return bb.ext<spvgentwo::ext::GLSL>()->opPow(x, y);
 }
 
 void ShaderLink::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)

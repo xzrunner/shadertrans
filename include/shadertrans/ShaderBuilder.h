@@ -6,6 +6,7 @@
 #include <string>
 #include <memory>
 #include <set>
+#include <map>
 
 namespace spvgentwo 
 { 
@@ -63,6 +64,9 @@ private:
 	// state
 	int m_unif_num = 0;
 	std::set<std::string> m_added_export_link_decl;
+
+	// cache
+	std::map<std::string, spvgentwo::Instruction*> m_input_cache;
 
 }; // ShaderBuilder
 

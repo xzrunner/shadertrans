@@ -66,6 +66,11 @@ ShaderBuilder::~ShaderBuilder()
 
 spvgentwo::Instruction* ShaderBuilder::AddInput(const std::string& name, const std::string& type)
 {
+	auto itr = m_input_cache.find(name);
+	if (itr != m_input_cache.end()) {
+		return itr->second;
+	}
+
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
 		ret = m_main->input<float>(name.c_str());
@@ -76,6 +81,11 @@ spvgentwo::Instruction* ShaderBuilder::AddInput(const std::string& name, const s
 	} else if (type == "vec4") {
 		ret = m_main->input<spvgentwo::glsl::vec4>(name.c_str());
 	}
+
+	if (ret) {
+		m_input_cache.insert({ name, ret });
+	}
+
 	return ret;
 }
 
@@ -298,6 +308,8 @@ void ShaderBuilder::ResetState()
 {
 	m_unif_num = 0;
 	m_added_export_link_decl.clear();
+
+	m_input_cache.clear();
 }
 
 }

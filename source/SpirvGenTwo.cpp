@@ -101,15 +101,11 @@ spvgentwo::Instruction* SpirvGenTwo::Dot(spvgentwo::Function* func, spvgentwo::I
 
 spvgentwo::Instruction* SpirvGenTwo::Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
-	if (a->getType()->isFloat() && b->getType()->isVector() || a->getType()->isVector() && b->getType()->isFloat()) {
-		int zz = 0;
-	}
-
 	return (*func)->Add(a, b);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{
+{	
 	return (*func)->Sub(a, b);
 }
 

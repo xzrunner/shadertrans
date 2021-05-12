@@ -43,6 +43,8 @@
     <ClCompile Include="..\..\..\source\ShaderBuilder.cpp">
       <Filter>builder</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\SpirvGenTwo.cpp">
+      <Filter>builder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +96,8 @@
     <ClInclude Include="..\..\..\include\shadertrans\ShaderBuilder.h">
       <Filter>builder</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\SpirvGenTwo.h">
+      <Filter>builder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

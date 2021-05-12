@@ -29,6 +29,7 @@
     <ClCompile Include="..\..\..\source\ShaderReflection.cpp" />
     <ClCompile Include="..\..\..\source\ShaderTrans.cpp" />
     <ClCompile Include="..\..\..\source\ShaderValidator.cpp" />
+    <ClCompile Include="..\..\..\source\SpirvGenTwo.cpp" />
     <ClCompile Include="..\..\..\source\SpirvTools.cpp" />
     <ClCompile Include="..\..\..\source\spirv_IR.cpp" />
     <ClCompile Include="..\..\..\source\spirv_Linker.cpp" />
@@ -47,6 +48,7 @@
     <ClInclude Include="..\..\..\include\shadertrans\ShaderStage.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderTrans.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderValidator.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\SpirvGenTwo.h" />
     <ClInclude Include="..\..\..\include\shadertrans\SpirvTools.h" />
     <ClInclude Include="..\..\..\include\shadertrans\spirv_IR.h" />
     <ClInclude Include="..\..\..\include\shadertrans\spirv_Linker.h" />

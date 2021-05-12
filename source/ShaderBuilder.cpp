@@ -91,6 +91,11 @@ spvgentwo::Instruction* ShaderBuilder::AddInput(const std::string& name, const s
 
 spvgentwo::Instruction* ShaderBuilder::AddOutput(const std::string& name, const std::string& type)
 {
+	auto itr = m_output_cache.find(name);
+	if (itr != m_output_cache.end()) {
+		return itr->second;
+	}
+
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
 		ret = m_main->output<float>(name.c_str());
@@ -101,11 +106,21 @@ spvgentwo::Instruction* ShaderBuilder::AddOutput(const std::string& name, const 
 	} else if (type == "vec4") {
 		ret = m_main->output<spvgentwo::glsl::vec4>(name.c_str());
 	}
+
+	if (ret) {
+		m_output_cache.insert({ name, ret });
+	}
+
 	return ret;
 }
 
 spvgentwo::Instruction* ShaderBuilder::AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type)
 {
+	auto itr = m_uniform_cache.find(name);
+	if (itr != m_uniform_cache.end()) {
+		return itr->second;
+	}
+
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
 		ret = module->uniformConstant<float>(name.c_str());
@@ -120,9 +135,11 @@ spvgentwo::Instruction* ShaderBuilder::AddUniform(spvgentwo::Module* module, con
 		img.imageType.depth = 0;
 		ret = module->uniformConstant(name.c_str(), img);
 	}
+
 	if (ret) {
-		++m_unif_num;
+		m_uniform_cache.insert({ name, ret });
 	}
+
 	return ret;
 }
 
@@ -306,10 +323,11 @@ void ShaderBuilder::InitMain()
 
 void ShaderBuilder::ResetState()
 {
-	m_unif_num = 0;
 	m_added_export_link_decl.clear();
 
 	m_input_cache.clear();
+	m_output_cache.clear();
+	m_uniform_cache.clear();
 }
 
 }

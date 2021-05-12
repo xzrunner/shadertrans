@@ -34,7 +34,6 @@ public:
 	spvgentwo::Instruction* AddInput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddOutput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type);
-	int GetUniformNum() const { return m_unif_num; }
 
 	std::shared_ptr<spvgentwo::Module> AddModule(ShaderStage stage, const std::string& glsl, const std::string& name);
 
@@ -62,11 +61,12 @@ private:
 	spvgentwo::Function* m_main_func = nullptr;
 
 	// state
-	int m_unif_num = 0;
+
 	std::set<std::string> m_added_export_link_decl;
 
-	// cache
 	std::map<std::string, spvgentwo::Instruction*> m_input_cache;
+	std::map<std::string, spvgentwo::Instruction*> m_output_cache;
+	std::map<std::string, spvgentwo::Instruction*> m_uniform_cache;
 
 }; // ShaderBuilder
 

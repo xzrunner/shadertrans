@@ -40,8 +40,9 @@
     <ClCompile Include="..\..\..\source\spirv_Parser.cpp">
       <Filter>spirv</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\ShaderLink.cpp">
-      <Filter>linker</Filter>
+    <ClCompile Include="..\..\..\source\ShaderBuilder.cpp">
+      <Filter>builder</Filter>
+    </ClCompile>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -90,8 +91,9 @@
     <ClInclude Include="..\..\..\include\shadertrans\spirv_Parser.h">
       <Filter>spirv</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\shadertrans\ShaderLink.h">
-      <Filter>linker</Filter>
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderBuilder.h">
+      <Filter>builder</Filter>
+    </ClInclude>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -122,7 +124,7 @@
     <Filter Include="spirv">
       <UniqueIdentifier>{8a14fd3a-81ca-4311-9c53-b7c3a794e785}</UniqueIdentifier>
     </Filter>
-    <Filter Include="linker">
+    <Filter Include="builder">
       <UniqueIdentifier>{55e7e181-33fb-4ebc-b2d9-b12c51be76ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

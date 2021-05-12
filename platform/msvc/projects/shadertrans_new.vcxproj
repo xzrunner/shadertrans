@@ -24,7 +24,7 @@
     <ClCompile Include="..\..\..\source\CompilerDX.cpp" />
     <ClCompile Include="..\..\..\source\GLSLangAdapter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderInfo.cpp" />
-    <ClCompile Include="..\..\..\source\ShaderLink.cpp" />
+    <ClCompile Include="..\..\..\source\ShaderBuilder.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParser.cpp" />
     <ClCompile Include="..\..\..\source\ShaderReflection.cpp" />
     <ClCompile Include="..\..\..\source\ShaderTrans.cpp" />
@@ -41,7 +41,7 @@
     <ClInclude Include="..\..\..\include\shadertrans\ConfigGLSL.h" />
     <ClInclude Include="..\..\..\include\shadertrans\GLSLangAdapter.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderInfo.h" />
-    <ClInclude Include="..\..\..\include\shadertrans\ShaderLink.h" />
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderBuilder.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderParser.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderReflection.h" />
     <ClInclude Include="..\..\..\include\shadertrans\ShaderStage.h" />

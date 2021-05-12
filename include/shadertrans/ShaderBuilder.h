@@ -21,11 +21,11 @@ namespace spvgentwo
 namespace shadertrans
 {
 
-class ShaderLink
+class ShaderBuilder
 {
 public:
-	ShaderLink();
-	~ShaderLink();
+	ShaderBuilder();
+	~ShaderBuilder();
 
 	spvgentwo::Module* GetMainModule() const { return m_main.get(); }
 	spvgentwo::Function* GetMainFunc() const { return m_main_func; }
@@ -47,6 +47,10 @@ public:
 	static spvgentwo::Instruction* Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Negate(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static spvgentwo::Instruction* Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
+	static spvgentwo::Instruction* Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Min(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Mix(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a);
 	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 	static spvgentwo::Instruction* Load(spvgentwo::Function* func, spvgentwo::Instruction* var);
 	static spvgentwo::Instruction* ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv);
@@ -106,6 +110,6 @@ private:
 	int m_unif_num = 0;
 	std::set<std::string> m_added_export_link_decl;
 
-}; // ShaderLink
+}; // ShaderBuilder
 
 }

@@ -1,4 +1,4 @@
-#include "shadertrans/ShaderLink.h"
+#include "shadertrans/ShaderBuilder.h"
 #include "shadertrans/ShaderTrans.h"
 #include "shadertrans/SpirvTools.h"
 
@@ -69,7 +69,7 @@ spvgentwo::Type create_type(spvgentwo::Module* module, const std::string& str)
 namespace shadertrans
 {
 
-ShaderLink::ShaderLink()
+ShaderBuilder::ShaderBuilder()
 {
 	m_logger = std::make_unique<spvgentwo::ConsoleLogger>();
 	m_alloc = std::make_unique<spvgentwo::HeapAllocator>();
@@ -78,11 +78,11 @@ ShaderLink::ShaderLink()
 	InitMain();
 }
 
-ShaderLink::~ShaderLink()
+ShaderBuilder::~ShaderBuilder()
 {
 }
 
-spvgentwo::Instruction* ShaderLink::AddInput(const std::string& name, const std::string& type)
+spvgentwo::Instruction* ShaderBuilder::AddInput(const std::string& name, const std::string& type)
 {
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
@@ -97,7 +97,7 @@ spvgentwo::Instruction* ShaderLink::AddInput(const std::string& name, const std:
 	return ret;
 }
 
-spvgentwo::Instruction* ShaderLink::AddOutput(const std::string& name, const std::string& type)
+spvgentwo::Instruction* ShaderBuilder::AddOutput(const std::string& name, const std::string& type)
 {
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
@@ -112,7 +112,7 @@ spvgentwo::Instruction* ShaderLink::AddOutput(const std::string& name, const std
 	return ret;
 }
 
-spvgentwo::Instruction* ShaderLink::AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type)
+spvgentwo::Instruction* ShaderBuilder::AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type)
 {
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
@@ -134,12 +134,12 @@ spvgentwo::Instruction* ShaderLink::AddUniform(spvgentwo::Module* module, const 
 	return ret;
 }
 
-spvgentwo::Instruction* ShaderLink::AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index)
+spvgentwo::Instruction* ShaderBuilder::AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index)
 {
 	return (*func)->opAccessChain(base, index);
 }
 
-spvgentwo::Instruction* ShaderLink::ComposeFloat2(spvgentwo::Function* func,
+spvgentwo::Instruction* ShaderBuilder::ComposeFloat2(spvgentwo::Function* func,
 	                                              spvgentwo::Instruction* x,
 	                                              spvgentwo::Instruction* y)
 {
@@ -147,7 +147,7 @@ spvgentwo::Instruction* ShaderLink::ComposeFloat2(spvgentwo::Function* func,
 	return (*func)->opCompositeConstruct(type, x, y);
 }
 
-spvgentwo::Instruction* ShaderLink::ComposeFloat3(spvgentwo::Function* func, 
+spvgentwo::Instruction* ShaderBuilder::ComposeFloat3(spvgentwo::Function* func, 
 	                                              spvgentwo::Instruction* x,
 	                                              spvgentwo::Instruction* y, 
 	                                              spvgentwo::Instruction* z)
@@ -156,7 +156,7 @@ spvgentwo::Instruction* ShaderLink::ComposeFloat3(spvgentwo::Function* func,
 	return (*func)->opCompositeConstruct(type, x, y, z);
 }
 
-spvgentwo::Instruction* ShaderLink::ComposeFloat4(spvgentwo::Function* func, 
+spvgentwo::Instruction* ShaderBuilder::ComposeFloat4(spvgentwo::Function* func, 
 	                                              spvgentwo::Instruction* x,
 	                                              spvgentwo::Instruction* y, 
 	                                              spvgentwo::Instruction* z,
@@ -166,39 +166,43 @@ spvgentwo::Instruction* ShaderLink::ComposeFloat4(spvgentwo::Function* func,
 	return (*func)->opCompositeConstruct(type, x, y, z, w);
 }
 
-spvgentwo::Instruction* ShaderLink::ComposeExtract(spvgentwo::Function* func,
+spvgentwo::Instruction* ShaderBuilder::ComposeExtract(spvgentwo::Function* func,
 	                                               spvgentwo::Instruction* comp, 
 	                                               unsigned int index)
 {
 	return (*func)->opCompositeExtract(comp, index);
 }
 
-spvgentwo::Instruction* ShaderLink::Dot(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderBuilder::Dot(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
 	return (*func)->opDot(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderBuilder::Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
+	if (a->getType()->isFloat() && b->getType()->isVector() || a->getType()->isVector() && b->getType()->isFloat()) {
+		int zz = 0;
+	}
+
 	return (*func)->Add(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderBuilder::Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
 	return (*func)->Sub(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderBuilder::Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
 	return (*func)->Mul(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+spvgentwo::Instruction* ShaderBuilder::Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
 	return (*func)->Div(a, b);
 }
 
-spvgentwo::Instruction* ShaderLink::Negate(spvgentwo::Function* func, spvgentwo::Instruction* v)
+spvgentwo::Instruction* ShaderBuilder::Negate(spvgentwo::Function* func, spvgentwo::Instruction* v)
 {
 	if (v->getType()->isFloat()) {
 		return (*func)->opFNegate(v);
@@ -209,28 +213,68 @@ spvgentwo::Instruction* ShaderLink::Negate(spvgentwo::Function* func, spvgentwo:
 	}
 }
 
-spvgentwo::Instruction* ShaderLink::Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y)
+spvgentwo::Instruction* ShaderBuilder::Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y)
 {
 	spvgentwo::BasicBlock& bb = *func;
 	return bb.ext<spvgentwo::ext::GLSL>()->opPow(x, y);
 }
 
-void ShaderLink::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
+spvgentwo::Instruction* ShaderBuilder::Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	return bb.ext<spvgentwo::ext::GLSL>()->opNormalize(v);
+}
+
+spvgentwo::Instruction* ShaderBuilder::Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	if (a->getType()->isFloat()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opFMax(a, b);
+	} else if (a->getType()->isInt()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opSMax(a, b);
+	} else if (a->getType()->isUnsigned()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opSMax(a, b);
+	} else {
+		return nullptr;
+	}
+}
+
+spvgentwo::Instruction* ShaderBuilder::Min(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	if (a->getType()->isFloat()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opFMin(a, b);
+	} else if (a->getType()->isInt()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opSMin(a, b);
+	} else if (a->getType()->isUnsigned()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opSMin(a, b);
+	} else {
+		return nullptr;
+	}
+}
+
+spvgentwo::Instruction* ShaderBuilder::Mix(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	return bb.ext<spvgentwo::ext::GLSL>()->opFMix(x, y, a);
+}
+
+void ShaderBuilder::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
 {
 	(*func)->opStore(dst, src);
 }
 
-spvgentwo::Instruction* ShaderLink::Load(spvgentwo::Function* func, spvgentwo::Instruction* var)
+spvgentwo::Instruction* ShaderBuilder::Load(spvgentwo::Function* func, spvgentwo::Instruction* var)
 {
 	return (*func)->opLoad(var);
 }
 
-spvgentwo::Instruction* ShaderLink::ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv)
+spvgentwo::Instruction* ShaderBuilder::ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv)
 {
 	return (*func)->opImageSampleImplictLod(img, uv);
 }
 
-std::shared_ptr<spvgentwo::Module> ShaderLink::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)
+std::shared_ptr<spvgentwo::Module> ShaderBuilder::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)
 {
 	for (auto& itr : m_modules) {
 		if (itr.first == name) {
@@ -268,7 +312,7 @@ std::shared_ptr<spvgentwo::Module> ShaderLink::AddModule(ShaderStage stage, cons
 	return module;
 }
 
-spvgentwo::Function* ShaderLink::QueryFunction(spvgentwo::Module& lib, const std::string& name)
+spvgentwo::Function* ShaderBuilder::QueryFunction(spvgentwo::Module& lib, const std::string& name)
 {
 	for (auto& func : lib.getFunctions()) 
 	{
@@ -281,14 +325,14 @@ spvgentwo::Function* ShaderLink::QueryFunction(spvgentwo::Module& lib, const std
 	return nullptr;
 }
 
-void ShaderLink::ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to)
+void ShaderBuilder::ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to)
 {
 	auto module = from->getModule();
 	module->replace(from, to);
 	module->assignIDs(m_gram.get());
 }
 
-spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Module* module, spvgentwo::Function* func)
+spvgentwo::Function* ShaderBuilder::CreateDeclFunc(spvgentwo::Module* module, spvgentwo::Function* func)
 {
 	spvgentwo::Function& dst = module->addFunction();
 
@@ -302,7 +346,7 @@ spvgentwo::Function* ShaderLink::CreateDeclFunc(spvgentwo::Module* module, spvge
 	return &dst;
 }
 
-void ShaderLink::AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export)
+void ShaderBuilder::AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export)
 {
 	if (is_export && m_added_export_link_decl.find(name) != m_added_export_link_decl.end()) {
 		return;
@@ -316,7 +360,7 @@ void ShaderLink::AddLinkDecl(spvgentwo::Function* func, const std::string& name,
 	}
 }
 
-spvgentwo::Function* ShaderLink::CreateFunc(spvgentwo::Module* module, const std::string& name, 
+spvgentwo::Function* ShaderBuilder::CreateFunc(spvgentwo::Module* module, const std::string& name, 
 	                                        const std::string& ret, const std::vector<std::string>& args)
 {
 	auto& func = module->addFunction();
@@ -331,19 +375,19 @@ spvgentwo::Function* ShaderLink::CreateFunc(spvgentwo::Module* module, const std
 	return &func;
 }
 
-spvgentwo::Instruction* ShaderLink::GetFuncParam(spvgentwo::Function* func, int index)
+spvgentwo::Instruction* ShaderBuilder::GetFuncParam(spvgentwo::Function* func, int index)
 {
 	return func->getParameter(index);
 }
 
-void ShaderLink::GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names)
+void ShaderBuilder::GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names)
 {
 	for (auto& param : func->getParameters()) {
 		names.push_back(param.getName());
 	}
 }
 
-spvgentwo::Instruction* ShaderLink::FuncCall(spvgentwo::Function* caller, spvgentwo::Function* callee, const std::vector<spvgentwo::Instruction*>& params)
+spvgentwo::Instruction* ShaderBuilder::FuncCall(spvgentwo::Function* caller, spvgentwo::Function* callee, const std::vector<spvgentwo::Instruction*>& params)
 {
 	spvgentwo::BasicBlock& bb = *caller;
 	switch (params.size())
@@ -387,78 +431,78 @@ spvgentwo::Instruction* ShaderLink::FuncCall(spvgentwo::Function* caller, spvgen
 	}
 }
 
-void ShaderLink::Return(spvgentwo::Function* func)
+void ShaderBuilder::Return(spvgentwo::Function* func)
 {
 	(*func)->opReturn();
 }
 
-void ShaderLink::ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* inst)
+void ShaderBuilder::ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* inst)
 {
 	(*func)->opReturnValue(inst);
 }
 
-spvgentwo::Instruction* ShaderLink::VariableFloat(spvgentwo::Function* func)
+spvgentwo::Instruction* ShaderBuilder::VariableFloat(spvgentwo::Function* func)
 {
 	return func->variable<float>();
 }
 
-spvgentwo::Instruction* ShaderLink::VariableFloat2(spvgentwo::Function* func)
+spvgentwo::Instruction* ShaderBuilder::VariableFloat2(spvgentwo::Function* func)
 {
 	return func->variable<spvgentwo::glsl::vec2>();
 }
 
-spvgentwo::Instruction* ShaderLink::VariableFloat3(spvgentwo::Function* func)
+spvgentwo::Instruction* ShaderBuilder::VariableFloat3(spvgentwo::Function* func)
 {
 	return func->variable<spvgentwo::glsl::vec3>();
 }
 
-spvgentwo::Instruction* ShaderLink::VariableFloat4(spvgentwo::Function* func)
+spvgentwo::Instruction* ShaderBuilder::VariableFloat4(spvgentwo::Function* func)
 {
 	return func->variable<spvgentwo::glsl::vec4>();
 }
 
-spvgentwo::Instruction* ShaderLink::ConstFloat(spvgentwo::Module* module, float x)
+spvgentwo::Instruction* ShaderBuilder::ConstFloat(spvgentwo::Module* module, float x)
 {
 	return module->constant(x);
 }
 
-spvgentwo::Instruction* ShaderLink::ConstFloat2(spvgentwo::Module* module, float x, float y)
+spvgentwo::Instruction* ShaderBuilder::ConstFloat2(spvgentwo::Module* module, float x, float y)
 {
 	return module->constant(spvgentwo::make_vector(x, y));
 }
 
-spvgentwo::Instruction* ShaderLink::ConstFloat3(spvgentwo::Module* module, float x, float y, float z)
+spvgentwo::Instruction* ShaderBuilder::ConstFloat3(spvgentwo::Module* module, float x, float y, float z)
 {
 	return module->constant(spvgentwo::make_vector(x, y, z));
 }
 
-spvgentwo::Instruction* ShaderLink::ConstFloat4(spvgentwo::Module* module, float x, float y, float z, float w)
+spvgentwo::Instruction* ShaderBuilder::ConstFloat4(spvgentwo::Module* module, float x, float y, float z, float w)
 {
 	return module->constant(spvgentwo::make_vector(x, y, z, w));
 }
 
-spvgentwo::Instruction* ShaderLink::ConstMatrix2(spvgentwo::Module* module, const float m[4])
+spvgentwo::Instruction* ShaderBuilder::ConstMatrix2(spvgentwo::Module* module, const float m[4])
 {
 	float m2[2][2];
 	memcpy(m2, m, sizeof(float) * 4);
 	return module->constant(spvgentwo::make_matrix(m2));
 }
 
-spvgentwo::Instruction* ShaderLink::ConstMatrix3(spvgentwo::Module* module, const float m[9])
+spvgentwo::Instruction* ShaderBuilder::ConstMatrix3(spvgentwo::Module* module, const float m[9])
 {
 	float m2[3][3];
 	memcpy(m2, m, sizeof(float) * 9);
 	return module->constant(spvgentwo::make_matrix(m2));
 }
 
-spvgentwo::Instruction* ShaderLink::ConstMatrix4(spvgentwo::Module* module, const float m[16])
+spvgentwo::Instruction* ShaderBuilder::ConstMatrix4(spvgentwo::Module* module, const float m[16])
 {
 	float m2[4][4];
 	memcpy(m2, m, sizeof(float) * 16);
 	return module->constant(spvgentwo::make_matrix(m2));
 }
 
-void ShaderLink::ImportAll()
+void ShaderBuilder::ImportAll()
 {
 	auto printer = spvgentwo::ModulePrinter::ModuleSimpleFuncPrinter([](const char* str) {
 		printf("%s", str);
@@ -479,13 +523,13 @@ void ShaderLink::ImportAll()
 	}
 }
 
-void ShaderLink::FinishMain()
+void ShaderBuilder::FinishMain()
 {
 	m_main->finalizeEntryPoints();
 	m_main->assignIDs(m_gram.get());
 }
 
-std::vector<uint32_t> ShaderLink::Link()
+std::vector<uint32_t> ShaderBuilder::Link()
 {
 	ResetState();
 
@@ -546,7 +590,7 @@ std::vector<uint32_t> ShaderLink::Link()
 	return spv;
 }
 
-std::string ShaderLink::ConnectCSMain(const std::string& main_glsl)
+std::string ShaderBuilder::ConnectCSMain(const std::string& main_glsl)
 {
 	auto spv = Link();
 	
@@ -562,7 +606,7 @@ std::string ShaderLink::ConnectCSMain(const std::string& main_glsl)
 	return ret;
 }
 
-void ShaderLink::Print(const spvgentwo::Module& module, bool output_ir)
+void ShaderBuilder::Print(const spvgentwo::Module& module, bool output_ir)
 {
 	std::vector<unsigned int> spv;
 	spvgentwo::BinaryVectorWriter writer(spv);
@@ -580,7 +624,7 @@ void ShaderLink::Print(const spvgentwo::Module& module, bool output_ir)
 	}
 }
 
-void ShaderLink::InitMain()
+void ShaderBuilder::InitMain()
 {
 	m_main = std::make_unique<spvgentwo::Module>(m_alloc.get(), spvgentwo::spv::AddressingModel::Logical,
 		spvgentwo::spv::MemoryModel::GLSL450, m_logger.get());
@@ -595,7 +639,7 @@ void ShaderLink::InitMain()
 	m_main_func = &entry;
 }
 
-void ShaderLink::ResetState()
+void ShaderBuilder::ResetState()
 {
 	m_unif_num = 0;
 	m_added_export_link_decl.clear();

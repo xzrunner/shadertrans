@@ -48,6 +48,11 @@ bool SpirvGenTwo::IsVector(const spvgentwo::Instruction& inst)
 	return inst.getType()->isVector();
 }
 
+int SpirvGenTwo::GetVectorNum(const spvgentwo::Instruction& inst)
+{
+	return inst.getType()->getVectorComponentCount();
+}
+
 // inst
 
 spvgentwo::Instruction* SpirvGenTwo::AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index)

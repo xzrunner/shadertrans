@@ -19,6 +19,7 @@ public:
 
 	static const char* GetType(const spvgentwo::Instruction& inst);
 	static bool IsVector(const spvgentwo::Instruction& inst);
+	static int GetVectorNum(const spvgentwo::Instruction& inst);
 
 	// inst
 

@@ -134,6 +134,11 @@ spvgentwo::Instruction* ShaderBuilder::AddUniform(spvgentwo::Module* module, con
 		spvgentwo::dyn_sampled_image_t img{ spvgentwo::spv::Op::OpTypeFloat };
 		img.imageType.depth = 0;
 		ret = module->uniformConstant(name.c_str(), img);
+	} else if (type == "cubemap") {
+		spvgentwo::dyn_sampled_image_t img{ spvgentwo::spv::Op::OpTypeFloat };
+		img.imageType.dimension = spvgentwo::spv::Dim::Cube;
+		img.imageType.depth = 0;
+		ret = module->uniformConstant(name.c_str(), img);
 	}
 
 	if (ret) {

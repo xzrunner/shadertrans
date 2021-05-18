@@ -130,6 +130,12 @@ spvgentwo::Instruction* SpirvGenTwo::Negate(spvgentwo::Function* func, spvgentwo
 	}
 }
 
+spvgentwo::Instruction* SpirvGenTwo::Sqrt(spvgentwo::Function* func, spvgentwo::Instruction* v)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	return bb.ext<spvgentwo::ext::GLSL>()->opSqrt(v);
+}
+
 spvgentwo::Instruction* SpirvGenTwo::Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y)
 {
 	spvgentwo::BasicBlock& bb = *func;

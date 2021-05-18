@@ -34,6 +34,7 @@ public:
 	static spvgentwo::Instruction* Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Negate(spvgentwo::Function* func, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Sqrt(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static spvgentwo::Instruction* Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
 	static spvgentwo::Instruction* Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static spvgentwo::Instruction* Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);

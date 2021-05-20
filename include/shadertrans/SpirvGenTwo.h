@@ -39,6 +39,7 @@ public:
 	static spvgentwo::Instruction* Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static spvgentwo::Instruction* Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Min(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Clamp(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* min, spvgentwo::Instruction* max);
 	static spvgentwo::Instruction* Mix(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a);
 	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 	static spvgentwo::Instruction* Load(spvgentwo::Function* func, spvgentwo::Instruction* var);

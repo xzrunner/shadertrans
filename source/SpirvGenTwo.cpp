@@ -176,6 +176,20 @@ spvgentwo::Instruction* SpirvGenTwo::Min(spvgentwo::Function* func, spvgentwo::I
 	}
 }
 
+spvgentwo::Instruction* SpirvGenTwo::Clamp(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* min, spvgentwo::Instruction* max)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	if (x->getType()->isFloat()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opFClamp(x, min, max);
+	} else if (x->getType()->isInt()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opSClamp(x, min, max);
+	} else if (x->getType()->isUnsigned()) {
+		return bb.ext<spvgentwo::ext::GLSL>()->opUClamp(x, min, max);
+	} else {
+		return nullptr;
+	}
+}
+
 spvgentwo::Instruction* SpirvGenTwo::Mix(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a)
 {
 	spvgentwo::BasicBlock& bb = *func;

@@ -156,7 +156,7 @@ spvgentwo::Instruction* SpirvGenTwo::Max(spvgentwo::Function* func, spvgentwo::I
 	} else if (a->getType()->isInt()) {
 		return bb.ext<spvgentwo::ext::GLSL>()->opSMax(a, b);
 	} else if (a->getType()->isUnsigned()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opSMax(a, b);
+		return bb.ext<spvgentwo::ext::GLSL>()->opUMax(a, b);
 	} else {
 		return nullptr;
 	}
@@ -170,7 +170,7 @@ spvgentwo::Instruction* SpirvGenTwo::Min(spvgentwo::Function* func, spvgentwo::I
 	} else if (a->getType()->isInt()) {
 		return bb.ext<spvgentwo::ext::GLSL>()->opSMin(a, b);
 	} else if (a->getType()->isUnsigned()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opSMin(a, b);
+		return bb.ext<spvgentwo::ext::GLSL>()->opUMin(a, b);
 	} else {
 		return nullptr;
 	}

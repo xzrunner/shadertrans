@@ -231,6 +231,43 @@ spvgentwo::Instruction* SpirvGenTwo::VariableFloat4(spvgentwo::Function* func)
 	return func->variable<spvgentwo::glsl::vec4>();
 }
 
+spvgentwo::Instruction* SpirvGenTwo::AddVariable(spvgentwo::Function* func, const char* name, spvgentwo::Instruction* value)
+{
+	spvgentwo::Instruction* ret = nullptr;
+
+	if (IsVector(*value))
+	{
+		int num = GetVectorNum(*value);
+		switch (num)
+		{
+		case 2:
+			ret = func->variable<spvgentwo::glsl::vec2>(name);
+			break;
+		case 3:
+			ret = func->variable<spvgentwo::glsl::vec3>(name);
+			break;
+		case 4:
+			ret = func->variable<spvgentwo::glsl::vec4>(name);
+			break;
+		}
+	}
+	else
+	{
+		auto type = value->getType();
+		if (type->isInt()) {
+			ret = func->variable<int>(name);
+		} else if (type->isFloat()) {
+			ret = func->variable<float>(name);
+		}
+	}
+
+	if (ret) {
+		(*func)->opStore(ret, value);
+	}
+
+	return ret;
+}
+
 spvgentwo::Instruction* SpirvGenTwo::ConstFloat(spvgentwo::Module* module, float x)
 {
 	return module->constant(x);

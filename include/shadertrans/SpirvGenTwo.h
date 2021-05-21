@@ -50,6 +50,8 @@ public:
 	static spvgentwo::Instruction* VariableFloat3(spvgentwo::Function* func);
 	static spvgentwo::Instruction* VariableFloat4(spvgentwo::Function* func);
 
+	static spvgentwo::Instruction* AddVariable(spvgentwo::Function* func, const char* name, spvgentwo::Instruction* value);
+
 	static spvgentwo::Instruction* ConstFloat(spvgentwo::Module* module, float x);
 	static spvgentwo::Instruction* ConstFloat2(spvgentwo::Module* module, float x, float y);
 	static spvgentwo::Instruction* ConstFloat3(spvgentwo::Module* module, float x, float y, float z);

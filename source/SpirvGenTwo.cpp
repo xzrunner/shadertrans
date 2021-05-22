@@ -55,72 +55,107 @@ int SpirvGenTwo::GetVectorNum(const spvgentwo::Instruction& inst)
 
 // inst
 
-spvgentwo::Instruction* SpirvGenTwo::AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index)
+spvgentwo::Instruction* SpirvGenTwo::AccessChain(spvgentwo::Function* func, 
+	                                             spvgentwo::Instruction* base, 
+	                                             unsigned int index)
 {
+	if (!base) {
+		return nullptr;
+	}
 	return (*func)->opAccessChain(base, index);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::ComposeFloat2(spvgentwo::Function* func,
-	                                              spvgentwo::Instruction* x,
-	                                              spvgentwo::Instruction* y)
+	                                               spvgentwo::Instruction* x,
+	                                               spvgentwo::Instruction* y)
 {
+	if (!x || !y) {
+		return nullptr;
+	}
 	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 2>>();
 	return (*func)->opCompositeConstruct(type, x, y);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::ComposeFloat3(spvgentwo::Function* func, 
-	                                              spvgentwo::Instruction* x,
-	                                              spvgentwo::Instruction* y, 
-	                                              spvgentwo::Instruction* z)
+	                                               spvgentwo::Instruction* x,
+	                                               spvgentwo::Instruction* y, 
+	                                               spvgentwo::Instruction* z)
 {
+	if (!x || !y || !z) {
+		return nullptr;
+	}
 	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 3>>();
 	return (*func)->opCompositeConstruct(type, x, y, z);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::ComposeFloat4(spvgentwo::Function* func, 
-	                                              spvgentwo::Instruction* x,
-	                                              spvgentwo::Instruction* y, 
-	                                              spvgentwo::Instruction* z,
-	                                              spvgentwo::Instruction* w)
+	                                               spvgentwo::Instruction* x,
+	                                               spvgentwo::Instruction* y, 
+	                                               spvgentwo::Instruction* z,
+	                                               spvgentwo::Instruction* w)
 {
+	if (!x || !y || !z || !w) {
+		return nullptr;
+	}
 	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 4>>();
 	return (*func)->opCompositeConstruct(type, x, y, z, w);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::ComposeExtract(spvgentwo::Function* func,
-	                                               spvgentwo::Instruction* comp, 
-	                                               unsigned int index)
+	                                                spvgentwo::Instruction* comp, 
+	                                                unsigned int index)
 {
+	if (!comp) {
+		return nullptr;
+	}
 	return (*func)->opCompositeExtract(comp, index);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Dot(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
+	if (!a || !b) {
+		return nullptr;
+	}
 	return (*func)->opDot(a, b);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
+	if (!a || !b) {
+		return nullptr;
+	}
 	return (*func)->Add(a, b);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {	
+	if (!a || !b) {
+		return nullptr;
+	}
 	return (*func)->Sub(a, b);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
+	if (!a || !b) {
+		return nullptr;
+	}
 	return (*func)->Mul(a, b);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
+	if (!a || !b) {
+		return nullptr;
+	}
 	return (*func)->Div(a, b);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Negate(spvgentwo::Function* func, spvgentwo::Instruction* v)
 {
+	if (!v) {
+		return nullptr;
+	}
 	if (v->getType()->isFloat()) {
 		return (*func)->opFNegate(v);
 	} else if (v->getType()->isInt()) {
@@ -132,24 +167,36 @@ spvgentwo::Instruction* SpirvGenTwo::Negate(spvgentwo::Function* func, spvgentwo
 
 spvgentwo::Instruction* SpirvGenTwo::Sqrt(spvgentwo::Function* func, spvgentwo::Instruction* v)
 {
+	if (!v) {
+		return nullptr;
+	}
 	spvgentwo::BasicBlock& bb = *func;
 	return bb.ext<spvgentwo::ext::GLSL>()->opSqrt(v);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y)
 {
+	if (!x || !y) {
+		return nullptr;
+	}
 	spvgentwo::BasicBlock& bb = *func;
 	return bb.ext<spvgentwo::ext::GLSL>()->opPow(x, y);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v)
 {
+	if (!v) {
+		return nullptr;
+	}
 	spvgentwo::BasicBlock& bb = *func;
 	return bb.ext<spvgentwo::ext::GLSL>()->opNormalize(v);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
+	if (!a || !b) {
+		return nullptr;
+	}
 	spvgentwo::BasicBlock& bb = *func;
 	if (a->getType()->isFloat()) {
 		return bb.ext<spvgentwo::ext::GLSL>()->opFMax(a, b);
@@ -164,6 +211,9 @@ spvgentwo::Instruction* SpirvGenTwo::Max(spvgentwo::Function* func, spvgentwo::I
 
 spvgentwo::Instruction* SpirvGenTwo::Min(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
+	if (!a || !b) {
+		return nullptr;
+	}
 	spvgentwo::BasicBlock& bb = *func;
 	if (a->getType()->isFloat()) {
 		return bb.ext<spvgentwo::ext::GLSL>()->opFMin(a, b);
@@ -178,6 +228,10 @@ spvgentwo::Instruction* SpirvGenTwo::Min(spvgentwo::Function* func, spvgentwo::I
 
 spvgentwo::Instruction* SpirvGenTwo::Clamp(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* min, spvgentwo::Instruction* max)
 {
+	if (!x || !min || !max) {
+		return nullptr;
+	}
+
 	spvgentwo::BasicBlock& bb = *func;
 	if (x->getType()->isFloat()) {
 		return bb.ext<spvgentwo::ext::GLSL>()->opFClamp(x, min, max);
@@ -192,22 +246,34 @@ spvgentwo::Instruction* SpirvGenTwo::Clamp(spvgentwo::Function* func, spvgentwo:
 
 spvgentwo::Instruction* SpirvGenTwo::Mix(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a)
 {
+	if (!x || !y || !a) {
+		return nullptr;
+	}
 	spvgentwo::BasicBlock& bb = *func;
 	return bb.ext<spvgentwo::ext::GLSL>()->opFMix(x, y, a);
 }
 
 void SpirvGenTwo::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
 {
+	if (!dst || !src) {
+		return;
+	}
 	(*func)->opStore(dst, src);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::Load(spvgentwo::Function* func, spvgentwo::Instruction* var)
 {
+	if (!var) {
+		return nullptr;
+	}
 	return (*func)->opLoad(var);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv)
 {
+	if (!img || !uv) {
+		return nullptr;
+	}
 	return (*func)->opImageSampleImplictLod(img, uv);
 }
 
@@ -233,6 +299,10 @@ spvgentwo::Instruction* SpirvGenTwo::VariableFloat4(spvgentwo::Function* func)
 
 spvgentwo::Instruction* SpirvGenTwo::AddVariable(spvgentwo::Function* func, const char* name, spvgentwo::Instruction* value)
 {
+	if (!value) {
+		return nullptr;
+	}
+
 	spvgentwo::Instruction* ret = nullptr;
 
 	if (IsVector(*value))
@@ -339,7 +409,7 @@ spvgentwo::Function* SpirvGenTwo::CreateDeclFunc(spvgentwo::Module* module, spvg
 }
 
 spvgentwo::Function* SpirvGenTwo::CreateFunc(spvgentwo::Module* module, const std::string& name, 
-	                                        const std::string& ret, const std::vector<std::string>& args)
+	                                         const std::string& ret, const std::vector<std::string>& args)
 {
 	auto& func = module->addFunction();
 	
@@ -367,6 +437,12 @@ void SpirvGenTwo::GetFuncParamNames(spvgentwo::Function* func, std::vector<std::
 
 spvgentwo::Instruction* SpirvGenTwo::FuncCall(spvgentwo::Function* caller, spvgentwo::Function* callee, const std::vector<spvgentwo::Instruction*>& params)
 {
+	for (auto& p : params) {
+		if (!p) {
+			return nullptr;
+		}
+	}
+
 	spvgentwo::BasicBlock& bb = *caller;
 	switch (params.size())
 	{

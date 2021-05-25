@@ -194,7 +194,7 @@ spvgentwo::Instruction* SpirvGenTwo::Pow(spvgentwo::Function* func, spvgentwo::I
 
 spvgentwo::Instruction* SpirvGenTwo::Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v)
 {
-	if (!v) {
+	if (!v || !IsVector(*v)) {
 		return nullptr;
 	}
 	spvgentwo::BasicBlock& bb = *func;

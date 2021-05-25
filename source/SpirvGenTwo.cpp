@@ -119,6 +119,15 @@ spvgentwo::Instruction* SpirvGenTwo::Dot(spvgentwo::Function* func, spvgentwo::I
 	return (*func)->opDot(a, b);
 }
 
+spvgentwo::Instruction* SpirvGenTwo::Cross(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	spvgentwo::BasicBlock& bb = *func;
+	return bb.ext<spvgentwo::ext::GLSL>()->opCross(a, b);
+}
+
 spvgentwo::Instruction* SpirvGenTwo::Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
 	if (!a || !b) {

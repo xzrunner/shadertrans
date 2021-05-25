@@ -29,6 +29,7 @@ public:
 	static spvgentwo::Instruction* ComposeFloat4(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* z, spvgentwo::Instruction* w);
 	static spvgentwo::Instruction* ComposeExtract(spvgentwo::Function* func, spvgentwo::Instruction* comp, unsigned int index);
 	static spvgentwo::Instruction* Dot(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Cross(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);

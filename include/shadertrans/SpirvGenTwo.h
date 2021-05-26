@@ -35,6 +35,7 @@ public:
 	static spvgentwo::Instruction* Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Negate(spvgentwo::Function* func, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Reflect(spvgentwo::Function* func, spvgentwo::Instruction* I, spvgentwo::Instruction* N);
 	static spvgentwo::Instruction* Sqrt(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static spvgentwo::Instruction* Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
 	static spvgentwo::Instruction* Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v);
@@ -44,7 +45,7 @@ public:
 	static spvgentwo::Instruction* Mix(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a);
 	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 	static spvgentwo::Instruction* Load(spvgentwo::Function* func, spvgentwo::Instruction* var);
-	static spvgentwo::Instruction* ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv);
+	static spvgentwo::Instruction* ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv, spvgentwo::Instruction* lod);
 
 	static spvgentwo::Instruction* VariableFloat(spvgentwo::Function* func);
 	static spvgentwo::Instruction* VariableFloat2(spvgentwo::Function* func);

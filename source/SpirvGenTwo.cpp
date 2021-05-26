@@ -174,6 +174,15 @@ spvgentwo::Instruction* SpirvGenTwo::Negate(spvgentwo::Function* func, spvgentwo
 	}
 }
 
+spvgentwo::Instruction* SpirvGenTwo::Reflect(spvgentwo::Function* func, spvgentwo::Instruction* I, spvgentwo::Instruction* N)
+{
+	if (!I || !N) {
+		return nullptr;
+	}
+	spvgentwo::BasicBlock& bb = *func;
+	return bb.ext<spvgentwo::ext::GLSL>()->opReflect(I, N);
+}
+
 spvgentwo::Instruction* SpirvGenTwo::Sqrt(spvgentwo::Function* func, spvgentwo::Instruction* v)
 {
 	if (!v) {
@@ -278,12 +287,17 @@ spvgentwo::Instruction* SpirvGenTwo::Load(spvgentwo::Function* func, spvgentwo::
 	return (*func)->opLoad(var);
 }
 
-spvgentwo::Instruction* SpirvGenTwo::ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv)
+spvgentwo::Instruction* SpirvGenTwo::ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv, spvgentwo::Instruction* lod)
 {
 	if (!img || !uv) {
 		return nullptr;
 	}
-	return (*func)->opImageSampleImplictLod(img, uv);
+
+	if (lod) {
+		return (*func)->opImageSampleExplicitLodLevel(img, uv, lod);
+	} else {
+		return (*func)->opImageSampleImplictLod(img, uv);
+	}
 }
 
 spvgentwo::Instruction* SpirvGenTwo::VariableFloat(spvgentwo::Function* func)

@@ -39,6 +39,7 @@ public:
 	static spvgentwo::Instruction* Sqrt(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static spvgentwo::Instruction* Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
 	static spvgentwo::Instruction* Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Length(spvgentwo::Function* func, spvgentwo::Instruction* v);
 	static spvgentwo::Instruction* Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Min(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* Clamp(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* min, spvgentwo::Instruction* max);
@@ -53,6 +54,8 @@ public:
 	static spvgentwo::Instruction* VariableFloat4(spvgentwo::Function* func);
 
 	static spvgentwo::Instruction* AddVariable(spvgentwo::Function* func, const char* name, spvgentwo::Instruction* value);
+
+	static spvgentwo::Instruction* ConstBool(spvgentwo::Module* module, bool b);
 
 	static spvgentwo::Instruction* ConstFloat(spvgentwo::Module* module, float x);
 	static spvgentwo::Instruction* ConstFloat2(spvgentwo::Module* module, float x, float y);

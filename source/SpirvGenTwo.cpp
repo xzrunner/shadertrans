@@ -210,6 +210,15 @@ spvgentwo::Instruction* SpirvGenTwo::Normalize(spvgentwo::Function* func, spvgen
 	return bb.ext<spvgentwo::ext::GLSL>()->opNormalize(v);
 }
 
+spvgentwo::Instruction* SpirvGenTwo::Length(spvgentwo::Function* func, spvgentwo::Instruction* v)
+{
+	if (!v || !IsVector(*v)) {
+		return nullptr;
+	}
+	spvgentwo::BasicBlock& bb = *func;
+	return bb.ext<spvgentwo::ext::GLSL>()->opLength(v);
+}
+
 spvgentwo::Instruction* SpirvGenTwo::Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
 	if (!a || !b) {
@@ -359,6 +368,11 @@ spvgentwo::Instruction* SpirvGenTwo::AddVariable(spvgentwo::Function* func, cons
 	}
 
 	return ret;
+}
+
+spvgentwo::Instruction* SpirvGenTwo::ConstBool(spvgentwo::Module* module, bool b)
+{
+	return module->constant(b);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::ConstFloat(spvgentwo::Module* module, float x)

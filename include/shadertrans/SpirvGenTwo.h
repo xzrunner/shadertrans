@@ -56,6 +56,7 @@ public:
 	static spvgentwo::Instruction* AddVariable(spvgentwo::Function* func, const char* name, spvgentwo::Instruction* value);
 
 	static spvgentwo::Instruction* ConstBool(spvgentwo::Module* module, bool b);
+	static spvgentwo::Instruction* ConstInt(spvgentwo::Module* module, int x);
 
 	static spvgentwo::Instruction* ConstFloat(spvgentwo::Module* module, float x);
 	static spvgentwo::Instruction* ConstFloat2(spvgentwo::Module* module, float x, float y);

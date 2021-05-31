@@ -72,7 +72,12 @@ spvgentwo::Instruction* ShaderBuilder::AddInput(const std::string& name, const s
 	}
 
 	spvgentwo::Instruction* ret = nullptr;
-	if (type == "float") {
+
+	if (type == "bool") {
+		ret = m_main->input<bool>(name.c_str());
+	} else if (type == "int") {
+		ret = m_main->input<int>(name.c_str());
+	} else if (type == "float") {
 		ret = m_main->input<float>(name.c_str());
 	} else if (type == "vec2") {
 		ret = m_main->input<spvgentwo::glsl::vec2>(name.c_str());
@@ -97,7 +102,11 @@ spvgentwo::Instruction* ShaderBuilder::AddOutput(const std::string& name, const 
 	}
 
 	spvgentwo::Instruction* ret = nullptr;
-	if (type == "float") {
+	if (type == "bool") {
+		ret = m_main->output<bool>(name.c_str());
+	} else if (type == "int") {
+		ret = m_main->output<int>(name.c_str());
+	} else if (type == "float") {
 		ret = m_main->output<float>(name.c_str());
 	} else if (type == "vec2") {
 		ret = m_main->output<spvgentwo::glsl::vec2>(name.c_str());
@@ -119,8 +128,12 @@ spvgentwo::Instruction* ShaderBuilder::AddUniform(spvgentwo::Module* module, con
 	std::string unif_name = GetAvaliableUnifName(name);
 
 	spvgentwo::Instruction* ret = nullptr;
-	if (type == "float") {
-		ret = module->uniformConstant<float>(name.c_str());
+	if (type == "bool") {
+		ret = m_main->uniformConstant<bool>(name.c_str());
+	} else if (type == "int") {
+		ret = m_main->uniformConstant<int>(name.c_str());
+	} else if (type == "float") {
+		ret = module->uniformConstant<float>(unif_name.c_str());
 	} else if (type == "vec2") {
 		ret = module->uniformConstant<spvgentwo::glsl::vec2>(unif_name.c_str());
 	} else if (type == "vec3") {

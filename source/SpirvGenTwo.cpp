@@ -17,7 +17,11 @@ namespace
 spvgentwo::Type create_type(spvgentwo::Module* module, const std::string& str)
 {
 	auto type = module->newType();
-	if (str == "float") {
+	if (str == "bool") {
+		type.Bool();
+	} else if (str == "int") {
+		type.Int();
+	} else if (str == "float") {
 		type.Float();
 	} else if (str == "vec2") {
 		type.VectorElement(2).Float();
@@ -373,6 +377,11 @@ spvgentwo::Instruction* SpirvGenTwo::AddVariable(spvgentwo::Function* func, cons
 spvgentwo::Instruction* SpirvGenTwo::ConstBool(spvgentwo::Module* module, bool b)
 {
 	return module->constant(b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::ConstInt(spvgentwo::Module* module, int x)
+{
+	return module->constant(x);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::ConstFloat(spvgentwo::Module* module, float x)

@@ -34,6 +34,7 @@ public:
 	spvgentwo::Instruction* AddInput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddOutput(const std::string& name, const std::string& type);
 	spvgentwo::Instruction* AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type);
+	const char* QueryUniformName(const spvgentwo::Instruction* unif) const;
 
 	std::shared_ptr<spvgentwo::Module> AddModule(ShaderStage stage, const std::string& glsl, const std::string& name);
 
@@ -50,6 +51,8 @@ private:
 	void InitMain();
 
 	void ResetState();
+
+	std::string GetAvaliableUnifName(const std::string& name) const;
 
 private:
 	std::unique_ptr<spvgentwo::ConsoleLogger> m_logger;

@@ -116,36 +116,43 @@ spvgentwo::Instruction* ShaderBuilder::AddOutput(const std::string& name, const 
 
 spvgentwo::Instruction* ShaderBuilder::AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type)
 {
-	auto itr = m_uniform_cache.find(name);
-	if (itr != m_uniform_cache.end()) {
-		return itr->second;
-	}
+	std::string unif_name = GetAvaliableUnifName(name);
 
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "float") {
 		ret = module->uniformConstant<float>(name.c_str());
 	} else if (type == "vec2") {
-		ret = module->uniformConstant<spvgentwo::glsl::vec2>(name.c_str());
+		ret = module->uniformConstant<spvgentwo::glsl::vec2>(unif_name.c_str());
 	} else if (type == "vec3") {
-		ret = module->uniformConstant<spvgentwo::glsl::vec3>(name.c_str());
+		ret = module->uniformConstant<spvgentwo::glsl::vec3>(unif_name.c_str());
 	} else if (type == "vec4") {
-		ret = module->uniformConstant<spvgentwo::glsl::vec4>(name.c_str());
+		ret = module->uniformConstant<spvgentwo::glsl::vec4>(unif_name.c_str());
 	} else if (type == "texture") {
 		spvgentwo::dyn_sampled_image_t img{ spvgentwo::spv::Op::OpTypeFloat };
 		img.imageType.depth = 0;
-		ret = module->uniformConstant(name.c_str(), img);
+		ret = module->uniformConstant(unif_name.c_str(), img);
 	} else if (type == "cubemap") {
 		spvgentwo::dyn_sampled_image_t img{ spvgentwo::spv::Op::OpTypeFloat };
 		img.imageType.dimension = spvgentwo::spv::Dim::Cube;
 		img.imageType.depth = 0;
-		ret = module->uniformConstant(name.c_str(), img);
+		ret = module->uniformConstant(unif_name.c_str(), img);
 	}
 
 	if (ret) {
-		m_uniform_cache.insert({ name, ret });
+		m_uniform_cache.insert({ unif_name, ret });
 	}
 
 	return ret;
+}
+
+const char* ShaderBuilder::QueryUniformName(const spvgentwo::Instruction* unif) const
+{
+	for (auto& itr : m_uniform_cache) {
+		if (itr.second == unif) {
+			return itr.first.c_str();
+		}
+	}
+	return nullptr;
 }
 
 std::shared_ptr<spvgentwo::Module> ShaderBuilder::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)
@@ -333,6 +340,24 @@ void ShaderBuilder::ResetState()
 	m_input_cache.clear();
 	m_output_cache.clear();
 	m_uniform_cache.clear();
+}
+
+std::string ShaderBuilder::GetAvaliableUnifName(const std::string& name) const
+{
+	if (m_uniform_cache.find(name) == m_uniform_cache.end()) {
+		return name;
+	}
+
+	int i = 1;
+	while (true)
+	{
+		std::string _name = name + std::to_string(i++);
+		if (m_uniform_cache.find(_name) == m_uniform_cache.end()) {
+			return _name;
+		}
+	}
+
+	return name;
 }
 
 }

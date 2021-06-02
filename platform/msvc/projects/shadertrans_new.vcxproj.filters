@@ -46,6 +46,9 @@
     <ClCompile Include="..\..\..\source\SpirvGenTwo.cpp">
       <Filter>builder</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderRename.cpp">
+      <Filter>rename</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\shadertrans\ShaderParser.h">
@@ -99,6 +102,9 @@
     <ClInclude Include="..\..\..\include\shadertrans\SpirvGenTwo.h">
       <Filter>builder</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderRename.h">
+      <Filter>rename</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="parser">
@@ -130,6 +136,9 @@
     </Filter>
     <Filter Include="builder">
       <UniqueIdentifier>{55e7e181-33fb-4ebc-b2d9-b12c51be76ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rename">
+      <UniqueIdentifier>{d1c57204-162e-4cb6-a6a5-14899066bc3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #include "shadertrans/ShaderBuilder.h"
 #include "shadertrans/ShaderTrans.h"
 #include "shadertrans/SpirvTools.h"
+#include "shadertrans/ShaderRename.h"
 
 #include <spvgentwo/Templates.h>
 #include <spvgentwo/Reader.h>
@@ -302,6 +303,8 @@ std::vector<uint32_t> ShaderBuilder::Link()
 
 	std::vector<uint32_t> spv;
 	spv_result_t status = spvtools::Link(context, contents, &spv, options);
+	ShaderRename::FillingUBOInstName(ShaderStage::PixelShader, spv);
+
 #ifdef SHADER_DEBUG_PRINT
 	std::string glsl;
 	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);

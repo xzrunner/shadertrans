@@ -2,6 +2,7 @@
 #include "shadertrans/ShaderTrans.h"
 #include "shadertrans/SpirvTools.h"
 #include "shadertrans/ShaderRename.h"
+#include "shadertrans/ShaderPreprocess.h"
 
 #include <spvgentwo/Templates.h>
 #include <spvgentwo/Reader.h>
@@ -178,7 +179,8 @@ std::shared_ptr<spvgentwo::Module> ShaderBuilder::AddModule(ShaderStage stage, c
 	}
 
     std::vector<unsigned int> spv;
-    ShaderTrans::GLSL2SpirV(stage, glsl, spv, true);
+	auto code = ShaderPreprocess::ReplaceIncludes(glsl);
+    ShaderTrans::GLSL2SpirV(stage, code, spv, true);
 
 	auto module = std::make_shared<spvgentwo::Module>(m_alloc.get(), spvgentwo::spv::AddressingModel::Logical, 
 		spvgentwo::spv::MemoryModel::GLSL450, m_logger.get());

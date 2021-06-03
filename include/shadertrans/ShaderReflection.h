@@ -48,7 +48,7 @@ public:
     static void GetUniforms(const std::vector<unsigned int>& spirv, 
         std::vector<Variable>& uniforms);
 
-    static void GetFunction(const std::vector<unsigned int>& spirv,
+    static bool GetFunction(const std::vector<unsigned int>& spirv,
         const std::string& name, Function& func);
 
 }; // ShaderReflection

@@ -454,7 +454,7 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 	}
 }
 
-void ShaderReflection::GetFunction(const std::vector<unsigned int>& spirv,
+bool ShaderReflection::GetFunction(const std::vector<unsigned int>& spirv,
                                    const std::string& name, Function& func)
 {
     //spirv_cross::CompilerGLSL compiler(spirv);
@@ -472,13 +472,15 @@ void ShaderReflection::GetFunction(const std::vector<unsigned int>& spirv,
     parser.Parse(spirv, module);
     auto f = module.functions.find(name);
     if (f == module.functions.end()) {
-        return;
+        return false;
     }
 
     for (auto& v : f->second.arguments) {
         func.arguments.push_back(parser_spirv_variable(v, module));
     }
     func.ret_type = parser_spirv_variable(f->second.ret_type, module);
+
+    return true;
 }
 
 }

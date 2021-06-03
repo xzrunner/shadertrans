@@ -25,6 +25,16 @@ namespace shadertrans
 class ShaderBuilder
 {
 public:
+	struct Module
+	{
+		std::string name;
+
+		std::shared_ptr<spvgentwo::Module> impl = nullptr;
+
+		std::vector<std::shared_ptr<Module>> includes;
+	};
+
+public:
 	ShaderBuilder();
 	~ShaderBuilder();
 
@@ -36,7 +46,7 @@ public:
 	spvgentwo::Instruction* AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type);
 	const char* QueryUniformName(const spvgentwo::Instruction* unif) const;
 
-	std::shared_ptr<spvgentwo::Module> AddModule(ShaderStage stage, const std::string& glsl, const std::string& name);
+	std::shared_ptr<Module> AddModule(ShaderStage stage, const std::string& glsl, const std::string& name);
 
 	void ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to);
 
@@ -54,12 +64,14 @@ private:
 
 	std::string GetAvaliableUnifName(const std::string& name) const;
 
+	std::shared_ptr<Module> FindModule(const std::string& name) const;
+
 private:
 	std::unique_ptr<spvgentwo::ConsoleLogger> m_logger;
 	std::unique_ptr<spvgentwo::HeapAllocator> m_alloc;
 	std::unique_ptr<spvgentwo::Grammar> m_gram;
 
-	std::vector<std::pair<std::string, std::shared_ptr<spvgentwo::Module>>> m_modules;
+	std::vector<std::shared_ptr<Module>> m_modules;
 	std::unique_ptr<spvgentwo::Module> m_main = nullptr;
 	spvgentwo::Function* m_main_func = nullptr;
 

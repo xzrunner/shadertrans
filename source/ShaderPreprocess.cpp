@@ -7,25 +7,39 @@
 namespace shadertrans
 {
 
-bool ShaderPreprocess::RemoveIncludes(std::string& code)
+std::string ShaderPreprocess::AddIncludeMacro(const std::string& source_code)
 {
-	if (code.find("#include") == std::string::npos) {
-		return false;
+	std::string ret = source_code;
+
+	auto itr = source_code.find("#include");
+	if (itr != std::string::npos) {
+		ret.insert(itr, "#extension GL_GOOGLE_include_directive : require\n");
 	}
 
-	std::stringstream ss(code);
+	return ret;
+}
+
+std::string ShaderPreprocess::RemoveIncludes(const std::string& source_code, std::vector<std::string>& include_paths)
+{
+	if (strncmp(source_code.c_str(), "#include", strlen("#include")) != 0) {
+		return source_code;
+	}
+
+	std::stringstream ss(source_code);
 
 	std::string out;
 	std::string line;
-	while (std::getline(ss, line)) {
-		if (line.find("#include") == std::string::npos) {
+	while (std::getline(ss, line)) 
+	{
+		std::string path;
+		if (GetPathFromLine(line, path)) {
+			include_paths.push_back(path);
+		} else {
 			out += line + '\n';
 		}
 	}
 
-	code = out;
-
-	return true;
+	return out;
 }
 
 std::string ShaderPreprocess::ReplaceIncludes(const std::string& source_code)
@@ -44,12 +58,9 @@ std::string ShaderPreprocess::LoadWithInclude(std::istream& cin)
 	std::string line;
 	while (std::getline(cin, line))
 	{
-		if (line.find("#include") != std::string::npos)
+		std::string path;
+		if (GetPathFromLine(line, path))
 		{
-			auto start = line.find_first_of('"');
-			auto end = line.find_last_of('"');
-			std::string path = line.substr(start + 1, end - start - 1);
-
 			// todo: include files search path
 			std::ifstream fin(path);
 			if (fin.is_open()) {
@@ -63,6 +74,19 @@ std::string ShaderPreprocess::LoadWithInclude(std::istream& cin)
 	}
 
 	return ret;
+}
+
+bool ShaderPreprocess::GetPathFromLine(const std::string& line, std::string& path)
+{
+	if (strncmp(line.c_str(), "#include", strlen("#include")) != 0) {
+		return false;
+	}
+
+	auto start = line.find_first_of('"');
+	auto end = line.find_last_of('"');
+	path = line.substr(start + 1, end - start - 1);
+
+	return true;
 }
 
 }

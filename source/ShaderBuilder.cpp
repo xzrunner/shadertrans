@@ -3,6 +3,7 @@
 #include "shadertrans/SpirvTools.h"
 #include "shadertrans/ShaderRename.h"
 #include "shadertrans/ShaderPreprocess.h"
+#include "shadertrans/SpirvGenTwo.h"
 
 #include <spvgentwo/Templates.h>
 #include <spvgentwo/Reader.h>
@@ -21,7 +22,12 @@
 #include <Windows.h>
 #endif
 
+#include <fstream>
+#include <streambuf>
+#include <filesystem>
 #include <assert.h>
+
+//#define UNIQUE_INCLUDE_MODULE
 
 //#define SHADER_DEBUG_PRINT
 
@@ -170,41 +176,98 @@ const char* ShaderBuilder::QueryUniformName(const spvgentwo::Instruction* unif) 
 	return nullptr;
 }
 
-std::shared_ptr<spvgentwo::Module> ShaderBuilder::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)
+std::shared_ptr<ShaderBuilder::Module> ShaderBuilder::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)
 {
-	for (auto& itr : m_modules) {
-		if (itr.first == name) {
-			return itr.second;
-		}
+	auto module = FindModule(name);
+	if (module) {
+		return module;
 	}
 
-    std::vector<unsigned int> spv;
-	auto code = ShaderPreprocess::ReplaceIncludes(glsl);
-    ShaderTrans::GLSL2SpirV(stage, code, spv, true);
+	module = std::make_shared<Module>();
+	module->name = name;
 
-	auto module = std::make_shared<spvgentwo::Module>(m_alloc.get(), spvgentwo::spv::AddressingModel::Logical, 
+#ifdef UNIQUE_INCLUDE_MODULE
+	std::vector<std::string> include_paths;
+	auto code = ShaderPreprocess::RemoveIncludes(glsl, include_paths);
+	for (auto& inc : include_paths)
+	{
+		if (!std::filesystem::exists(inc)) {
+			printf("Can't find file %s\n", inc.c_str());
+			continue;
+		}
+
+		auto absolute = std::filesystem::absolute(inc).string();
+		auto inc_module = FindModule(absolute);
+		if (!inc_module) 
+		{
+			std::ifstream fin(absolute.c_str());
+			std::string str((std::istreambuf_iterator<char>(fin)),
+				std::istreambuf_iterator<char>());
+			inc_module = AddModule(stage, "#version 330 core\n" + str, absolute);
+
+			// export funcs
+			int idx = 0;
+			for (auto& func : inc_module->impl->getFunctions()) 
+			{
+				std::string decl_name = func->getFunction()->getName();
+				decl_name = decl_name.substr(0, decl_name.find_first_of("("));
+				
+				//std::string decl_name = absolute + "_func" + std::to_string(idx++);
+				AddLinkDecl(&func, decl_name, true);
+			}
+		}
+		module->includes.push_back(inc_module);
+	}
+#else
+	auto code = ShaderPreprocess::AddIncludeMacro(glsl);
+#endif // UNIQUE_INCLUDE_MODULE
+
+	auto spv_module = std::make_shared<spvgentwo::Module>(m_alloc.get(), spvgentwo::spv::AddressingModel::Logical, 
 		spvgentwo::spv::MemoryModel::GLSL450, m_logger.get());
 
-	// configure capabilities and extensions
-	module->addCapability(spvgentwo::spv::Capability::Shader);
-	module->addCapability(spvgentwo::spv::Capability::Linkage);
+	spv_module->reset();
 
+#ifdef UNIQUE_INCLUDE_MODULE
+	for (auto& inc : module->includes)
+	{
+		// import funcs
+		int idx = 0;
+		for (auto& func : inc->impl->getFunctions())
+		{
+			auto _func = SpirvGenTwo::CreateDeclFunc(spv_module.get(), &func);
+
+			std::string decl_name = func->getFunction()->getName();
+			decl_name = decl_name.substr(0, decl_name.find_first_of("("));
+
+			//std::string decl_name = inc->name + "_func" + std::to_string(idx++);
+			AddLinkDecl(_func, decl_name, false);
+		}
+	}
+#endif // UNIQUE_INCLUDE_MODULE
+
+	// configure capabilities and extensions
+	spv_module->addCapability(spvgentwo::spv::Capability::Shader);
+	spv_module->addCapability(spvgentwo::spv::Capability::Linkage);
+
+	std::vector<unsigned int> spv;
+	ShaderTrans::GLSL2SpirV(stage, code, spv, true);
     BinaryVectorReader reader(spv);
 
-    module->reset();
-    module->readAndInit(reader, *m_gram);
+    spv_module->readAndInit(reader, *m_gram);
 
 	// clear entry points
-	module->getEntryPoints().clear();
-	module->getExecutionModes().clear();
-	module->getNames().erase(module->getNames().begin());
+	spv_module->getEntryPoints().clear();
+	spv_module->getExecutionModes().clear();
+	spv_module->getNames().erase(spv_module->getNames().begin());
 
-	module->finalizeEntryPoints();
-	module->assignIDs(m_gram.get());
+	spv_module->finalizeEntryPoints();
+	spv_module->assignIDs(m_gram.get());
+
+	module->impl = spv_module;
 
 	//Print(*module);
 
-	m_modules.push_back(std::make_pair(name, module));
+	m_modules.push_back(module);
 
 	return module;
 }
@@ -246,8 +309,8 @@ void ShaderBuilder::ImportAll()
 	options.printer = &printer;
 	options.allocator = m_alloc.get();
 
-	for (auto& itr : m_modules) {
-		spvgentwo::LinkerHelper::import(*itr.second, *m_main, options);
+	for (auto& module : m_modules) {
+		spvgentwo::LinkerHelper::import(*module->impl, *m_main, options);
 	}
 }
 
@@ -287,11 +350,11 @@ std::vector<uint32_t> ShaderBuilder::Link()
 	context.SetMessageConsumer(consumer);
 
     std::vector<std::vector<unsigned int>> contents;
-    for (auto& itr : m_modules) 
+    for (auto& module : m_modules)
 	{
 		std::vector<unsigned int> spv;
 		spvgentwo::BinaryVectorWriter writer(spv);
-		itr.second->write(writer);
+		module->impl->write(writer);
         contents.emplace_back(spv);
     }
 	{
@@ -376,6 +439,16 @@ std::string ShaderBuilder::GetAvaliableUnifName(const std::string& name) const
 	}
 
 	return name;
+}
+
+std::shared_ptr<ShaderBuilder::Module> ShaderBuilder::FindModule(const std::string& name) const
+{
+	for (auto& module : m_modules) {
+		if (module->name == name) {
+			return module;
+		}
+	}
+	return nullptr;
 }
 
 }

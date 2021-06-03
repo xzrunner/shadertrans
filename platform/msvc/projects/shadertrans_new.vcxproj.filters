@@ -8,10 +8,10 @@
       <Filter>parser</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ShaderTrans.cpp">
-      <Filter>trans</Filter>
+      <Filter>tools\trans</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ShaderValidator.cpp">
-      <Filter>check</Filter>
+      <Filter>tools\check</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\CompilerDX.cpp">
       <Filter>tools</Filter>
@@ -47,7 +47,10 @@
       <Filter>builder</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ShaderRename.cpp">
-      <Filter>rename</Filter>
+      <Filter>tools\rename</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderPreprocess.cpp">
+      <Filter>tools\format</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -58,10 +61,10 @@
       <Filter>parser</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\shadertrans\ShaderTrans.h">
-      <Filter>trans</Filter>
+      <Filter>tools\trans</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\shadertrans\ShaderValidator.h">
-      <Filter>check</Filter>
+      <Filter>tools\check</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\shadertrans\CompilerDX.h">
       <Filter>tools</Filter>
@@ -103,18 +106,15 @@
       <Filter>builder</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\shadertrans\ShaderRename.h">
-      <Filter>rename</Filter>
+      <Filter>tools\rename</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\shadertrans\ShaderPreprocess.h">
+      <Filter>tools\format</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="parser">
       <UniqueIdentifier>{aef7430c-537d-4077-9922-295ee3d68957}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="trans">
-      <UniqueIdentifier>{74cb491e-6c26-4c61-acbc-9f00e2cc10d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="check">
-      <UniqueIdentifier>{a82eb963-6753-41b4-ac3b-2dbfcb94094c}</UniqueIdentifier>
     </Filter>
     <Filter Include="tools">
       <UniqueIdentifier>{fd097820-789b-4c58-b66f-6f547dfbe04b}</UniqueIdentifier>
@@ -137,8 +137,17 @@
     <Filter Include="builder">
       <UniqueIdentifier>{55e7e181-33fb-4ebc-b2d9-b12c51be76ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="rename">
+    <Filter Include="tools\check">
+      <UniqueIdentifier>{a82eb963-6753-41b4-ac3b-2dbfcb94094c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools\rename">
       <UniqueIdentifier>{d1c57204-162e-4cb6-a6a5-14899066bc3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools\trans">
+      <UniqueIdentifier>{74cb491e-6c26-4c61-acbc-9f00e2cc10d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools\format">
+      <UniqueIdentifier>{8beb1d65-76df-4d43-82a1-197a97a63bf4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

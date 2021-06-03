@@ -247,10 +247,6 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
 
     DirStackFileIncluder includer;
 
-    ////Get Path of File
-    //std::string Path = GetFilePath(filename);
-    //includer.pushExternalLocalDirectory(Path);
-
     std::string preprocessed_glsl;
     if (!shader.preprocess(&resources, default_version, ENoProfile, false, false, messages, &preprocessed_glsl, includer))
     {

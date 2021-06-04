@@ -46,7 +46,7 @@ public:
 	spvgentwo::Instruction* AddUniform(spvgentwo::Module* module, const std::string& name, const std::string& type);
 	const char* QueryUniformName(const spvgentwo::Instruction* unif) const;
 
-	std::shared_ptr<Module> AddModule(ShaderStage stage, const std::string& glsl, const std::string& name);
+	std::shared_ptr<Module> AddModule(ShaderStage stage, const std::string& code, const std::string& lang, const std::string& name, const std::string& entry_point);
 
 	void ReplaceFunc(spvgentwo::Function* from, spvgentwo::Function* to);
 

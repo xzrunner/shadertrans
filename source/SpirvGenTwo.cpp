@@ -432,6 +432,10 @@ spvgentwo::Function* SpirvGenTwo::QueryFunction(spvgentwo::Module& lib, const st
 	for (auto& func : lib.getFunctions()) 
 	{
 		std::string f_name = func.getName();
+		size_t dot = f_name.find_first_of('.');
+		if (dot != std::string::npos) {
+			f_name = f_name.substr(dot + 1);
+		}
 		f_name = f_name.substr(0, f_name.find_first_of('('));
 		if (f_name == name) {
 			return &func;

@@ -148,9 +148,14 @@ void Parser::Parse(const std::vector<unsigned int>& ir, Module& module)
 			spv_word loc = ir[++i];
 
 			curFunc = names[loc];
+			size_t dot = curFunc.find_first_of('.');
+			if (dot != std::string::npos) {
+				curFunc = curFunc.substr(dot + 1);
+			}
 			size_t args = curFunc.find_first_of('(');
-			if (args != std::string::npos)
+			if (args != std::string::npos) {
 				curFunc = curFunc.substr(0, args);
+			}
 
 			fetchType(module.functions[curFunc].ret_type, type);
 			module.functions[curFunc].line_start = -1;

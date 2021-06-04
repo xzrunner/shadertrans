@@ -6,6 +6,14 @@
 #include <spirv.hpp>
 #include <spirv_glsl.hpp>
 #include <spirv_reflect.h>
+#include <spvgentwo/Module.h>
+#include <spvgentwo/Grammar.h>
+#include <spvgentwo/Reader.h>
+#include <spvgentwo/Spv.h>
+#include <common/ModulePrinter.h>
+#include <common/HeapAllocator.h>
+#include <common/ConsoleLogger.h>
+#include <common/HeapHashMap.h>
 
 #include <fstream>
 
@@ -298,78 +306,98 @@ Variable parser_spirv_variable(const shadertrans::spirv::Variable& var,
 
     return ret;
 }
-//
-//Variable parser_spvgentwo_variable(const spvgentwo::Instruction& inst)
-//{
-//    Variable ret;
-//    if (!inst.isType()) {
-//        ret.name = inst.getName();
-//    }
-//    ret.type = VarType::Unknown;
-//
-//    spvgentwo::Type type = *inst.getType();
-//    if (type.isPointer()) {
-//        auto& sub_types = type.getSubTypes();
-//        assert(sub_types.size() == 1);
-//        type = spvgentwo::Type(sub_types.front());
-//    }
-//
-//    if (type.isVoid()) {
-//        ret.type = VarType::Void;
-//    } 
-//    
-//    else if (type.isBool()) {
-//        ret.type = VarType::Bool;
-//    } else if (type.isInt()) {
-//        ret.type = VarType::Int;
-//    } else if (type.isFloat()) {
-//        ret.type = VarType::Float;
-//    } else if (type.isMatrix()) {
-//        switch (type.getVectorComponentCount())
-//        {
-//        case 2:
-//            ret.type = VarType::Mat2;
-//            break;
-//        case 3:
-//            ret.type = VarType::Mat3;
-//            break;
-//        case 4:
-//            ret.type = VarType::Mat4;
-//            break;
-//        }
-//    } else if (type.isVectorOfInt()) {
-//        switch (type.getVectorComponentCount())
-//        {
-//        case 2:
-//            ret.type = VarType::Int2;
-//            break;
-//        case 3:
-//            ret.type = VarType::Int3;
-//            break;
-//        case 4:
-//            ret.type = VarType::Int4;
-//            break;
-//        }
-//    } else if (type.isVectorOfFloat()) {
-//        switch (type.getVectorComponentCount())
-//        {
-//        case 2:
-//            ret.type = VarType::Float2;
-//            break;
-//        case 3:
-//            ret.type = VarType::Float3;
-//            break;
-//        case 4:
-//            ret.type = VarType::Float4;
-//            break;
-//        }
-//    } else if (type.isArray()) {
-//        ret.type = VarType::Array;
-//    } else if (type.isStruct()) {
-//        ret.type = VarType::Struct;
-//    }
-//    return ret;
-//}
+
+Variable parser_spvgentwo_variable(const spvgentwo::Instruction& inst)
+{
+    Variable ret;
+    if (!inst.isType()) {
+        ret.name = inst.getName();
+    }
+    ret.type = VarType::Unknown;
+
+    spvgentwo::Type type = *inst.getType();
+    if (type.isPointer()) {
+        auto& sub_types = type.getSubTypes();
+        assert(sub_types.size() == 1);
+        type = spvgentwo::Type(sub_types.front());
+    }
+
+    if (type.isVoid()) {
+        ret.type = VarType::Void;
+    } 
+    
+    else if (type.isBool()) {
+        ret.type = VarType::Bool;
+    } else if (type.isInt()) {
+        ret.type = VarType::Int;
+    } else if (type.isFloat()) {
+        ret.type = VarType::Float;
+    } else if (type.isMatrix()) {
+        switch (type.getVectorComponentCount())
+        {
+        case 2:
+            ret.type = VarType::Mat2;
+            break;
+        case 3:
+            ret.type = VarType::Mat3;
+            break;
+        case 4:
+            ret.type = VarType::Mat4;
+            break;
+        }
+    } else if (type.isVectorOfInt()) {
+        switch (type.getVectorComponentCount())
+        {
+        case 2:
+            ret.type = VarType::Int2;
+            break;
+        case 3:
+            ret.type = VarType::Int3;
+            break;
+        case 4:
+            ret.type = VarType::Int4;
+            break;
+        }
+    } else if (type.isVectorOfFloat()) {
+        switch (type.getVectorComponentCount())
+        {
+        case 2:
+            ret.type = VarType::Float2;
+            break;
+        case 3:
+            ret.type = VarType::Float3;
+            break;
+        case 4:
+            ret.type = VarType::Float4;
+            break;
+        }
+    } else if (type.isArray()) {
+        ret.type = VarType::Array;
+    } else if (type.isStruct()) {
+        ret.type = VarType::Struct;
+    }
+    return ret;
+}
+
+template <typename U32Vector>
+class BinaryVectorReader : public spvgentwo::IReader 
+{
+public:
+	BinaryVectorReader(U32Vector& spv) : m_vec(spv), m_index(0) { }
+	~BinaryVectorReader() { }
+
+	bool get(unsigned int& _word) final
+	{
+		if (m_index >= m_vec.size())
+			return false;
+		_word = m_vec[m_index++];
+		return true;
+	}
+
+private:
+	U32Vector& m_vec;
+	int m_index;
+}; // BinaryVectorReader
 
 }
 
@@ -386,7 +414,7 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 	//auto entries = compiler.get_entry_points_and_stages();
 	//for (auto& e : entries)
 	//{
-	//	if (e.execution_model == ::spv::ExecutionModelGLCompute)
+	//	if (e.execution_model == ::spvgentwo::spv::ExecutionModelGLCompute)
 	//	{
 	//		const auto& spv_entry = compiler.get_entry_point(e.name, e.execution_model);
 	//		m_props.insert({ "local_size_x", ShaderVariant(static_cast<int>(spv_entry.workgroup_size.x)) });
@@ -457,15 +485,52 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 bool ShaderReflection::GetFunction(const std::vector<unsigned int>& spirv,
                                    const std::string& name, Function& func)
 {
+    //spvgentwo::HeapAllocator alloc;
+    //spvgentwo::ConsoleLogger logger;
+
+    //spvgentwo::Module spv_module(&alloc, &logger);
+    //spvgentwo::Grammar gram(&alloc);
+
+    //BinaryVectorReader reader(spirv);
+    //if (spv_module.readAndInit(reader, gram) == false) {
+    //    return false;
+    //}
+
+    //for (const spvgentwo::Function& fun : spv_module.getFunctions())
+    //{
+    //    std::string fun_name = fun.getName();
+
+    //    auto itr_dot = fun_name.find('.');
+    //    if (itr_dot != std::string::npos) {
+    //        fun_name = fun_name.substr(itr_dot + 1);
+    //    }        
+    //    if (fun_name.substr(0, fun_name.find_first_of('(')) == name)
+    //    {
+    //        func.ret_type = parser_spvgentwo_variable(*fun.getReturnTypeInstr());
+    //        for (auto& param : fun.getParameters()) {
+    //            func.arguments.push_back(parser_spvgentwo_variable(param));
+    //        }
+    //        return true;
+    //    }
+    //}
+
+    //return false;
+
+    ////////////////////////////////////////////////////////////////////////////
+
     //spirv_cross::CompilerGLSL compiler(spirv);
     //spirv_cross::ShaderResources resources = compiler.get_shader_resources();
 
-    //////////////////////////////////////////////////////////////////////////
+    //return true;
 
-    //SpvReflectShaderModule module;
-    //spvReflectCreateShaderModule(spirv.size() * sizeof(unsigned int), spirv.data(), &module);
+    ////////////////////////////////////////////////////////////////////////////
 
-    //////////////////////////////////////////////////////////////////////////
+    //SpvReflectShaderModule module2;
+    //spvReflectCreateShaderModule(spirv.size() * sizeof(unsigned int), spirv.data(), &module2);
+
+    //return true;
+
+    ////////////////////////////////////////////////////////////////////////////
 
     spirv::Parser parser;
     spirv::Module module;
@@ -481,6 +546,8 @@ bool ShaderReflection::GetFunction(const std::vector<unsigned int>& spirv,
     func.ret_type = parser_spirv_variable(f->second.ret_type, module);
 
     return true;
+
+    ////////////////////////////////////////////////////////////////////////////
 }
 
 }

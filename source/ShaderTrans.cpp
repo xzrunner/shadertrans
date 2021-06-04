@@ -149,19 +149,17 @@ Blob* DefaultLoadCallback(const char* includeName)
     return CreateBlob(ret.data(), static_cast<uint32_t>(ret.size()));
 }
 
-const char* entryPoint = "main";
-
 }
 
 namespace shadertrans
 {
 
-void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
+void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl, const std::string& entry_point,
                              std::vector<unsigned int>& spirv, std::ostream& out)
 {
     std::vector<const wchar_t*> dxcArgs;
     dxcArgs.push_back(L"-Zpr");
-    dxcArgs.push_back(L"-O3");
+    dxcArgs.push_back(L"-O0");
     dxcArgs.push_back(L"-spirv");
 
     CComPtr<IDxcBlobEncoding> sourceBlob;
@@ -170,7 +168,7 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl,
     IFTARG(sourceBlob->GetBufferSize() >= 4);
 
     std::wstring entryPointUtf16;
-    Unicode::UTF8ToUTF16String(hlsl::entryPoint, &entryPointUtf16);
+    Unicode::UTF8ToUTF16String(entry_point.c_str(), &entryPointUtf16);
 
     std::wstring shaderProfile = hlsl_shader_profile_name(stage, 6, 0);;
 

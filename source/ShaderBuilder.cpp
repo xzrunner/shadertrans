@@ -176,7 +176,8 @@ const char* ShaderBuilder::QueryUniformName(const spvgentwo::Instruction* unif) 
 	return nullptr;
 }
 
-std::shared_ptr<ShaderBuilder::Module> ShaderBuilder::AddModule(ShaderStage stage, const std::string& glsl, const std::string& name)
+std::shared_ptr<ShaderBuilder::Module> 
+ShaderBuilder::AddModule(ShaderStage stage, const std::string& _code, const std::string& lang, const std::string& name, const std::string& entry_point)
 {
 	auto module = FindModule(name);
 	if (module) {
@@ -188,7 +189,7 @@ std::shared_ptr<ShaderBuilder::Module> ShaderBuilder::AddModule(ShaderStage stag
 
 #ifdef UNIQUE_INCLUDE_MODULE
 	std::vector<std::string> include_paths;
-	auto code = ShaderPreprocess::RemoveIncludes(glsl, include_paths);
+	auto code = ShaderPreprocess::RemoveIncludes(_code, include_paths);
 	for (auto& inc : include_paths)
 	{
 		if (!std::filesystem::exists(inc)) {
@@ -203,7 +204,7 @@ std::shared_ptr<ShaderBuilder::Module> ShaderBuilder::AddModule(ShaderStage stag
 			std::ifstream fin(absolute.c_str());
 			std::string str((std::istreambuf_iterator<char>(fin)),
 				std::istreambuf_iterator<char>());
-			inc_module = AddModule(stage, "#version 330 core\n" + str, absolute);
+			inc_module = AddModule(stage, str, lang, name, entry_point);
 
 			// export funcs
 			int idx = 0;
@@ -219,7 +220,10 @@ std::shared_ptr<ShaderBuilder::Module> ShaderBuilder::AddModule(ShaderStage stag
 		module->includes.push_back(inc_module);
 	}
 #else
-	auto code = ShaderPreprocess::AddIncludeMacro(glsl);
+	std::string code = _code;
+	if (lang == "glsl") {
+		code = ShaderPreprocess::PrepareGLSL(code);
+	}
 #endif // UNIQUE_INCLUDE_MODULE
 
 	auto spv_module = std::make_shared<spvgentwo::Module>(m_alloc.get(), spvgentwo::spv::AddressingModel::Logical, 
@@ -250,7 +254,12 @@ std::shared_ptr<ShaderBuilder::Module> ShaderBuilder::AddModule(ShaderStage stag
 	spv_module->addCapability(spvgentwo::spv::Capability::Linkage);
 
 	std::vector<unsigned int> spv;
-	ShaderTrans::GLSL2SpirV(stage, code, spv, true);
+    if (lang == "glsl") {
+        shadertrans::ShaderTrans::GLSL2SpirV(stage, code, spv, true);
+    }  else if (lang == "hlsl") {
+        shadertrans::ShaderTrans::HLSL2SpirV(stage, code, entry_point, spv);
+    }
+
     BinaryVectorReader reader(spv);
 
     spv_module->readAndInit(reader, *m_gram);

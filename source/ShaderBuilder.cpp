@@ -5,11 +5,8 @@
 #include "shadertrans/ShaderPreprocess.h"
 #include "shadertrans/SpirvGenTwo.h"
 
-#include <spvgentwo/Templates.h>
-#include <spvgentwo/Reader.h>
-#include <spvgentwo/Module.h>
+#include <spvgentwo/SpvGenTwo.h>
 #include <spvgentwo/Grammar.h>
-#include <spvgentwo/TypeAlias.h>
 #include <common/ConsoleLogger.h>
 #include <common/HeapAllocator.h>
 #include <common/LinkerHelper.h>

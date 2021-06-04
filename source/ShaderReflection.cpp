@@ -6,14 +6,7 @@
 #include <spirv.hpp>
 #include <spirv_glsl.hpp>
 #include <spirv_reflect.h>
-#include <spvgentwo/Module.h>
-#include <spvgentwo/Grammar.h>
-#include <spvgentwo/Reader.h>
-#include <spvgentwo/Spv.h>
-#include <common/ModulePrinter.h>
-#include <common/HeapAllocator.h>
-#include <common/ConsoleLogger.h>
-#include <common/HeapHashMap.h>
+#include <spvgentwo/SpvGenTwo.h>
 
 #include <fstream>
 

@@ -2,11 +2,7 @@
 #include "shadertrans/ShaderTrans.h"
 #include "shadertrans/SpirvTools.h"
 
-#include <spvgentwo/Instruction.h>
-#include <spvgentwo/Type.h>
-#include <spvgentwo/Templates.h>
-#include <spvgentwo/GLSL450Instruction.h>
-#include <spvgentwo/TypeAlias.h>
+#include <spvgentwo/SpvGenTwo.h>
 #include <common/BinaryVectorWriter.h>
 
 #include <assert.h>

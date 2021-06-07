@@ -174,8 +174,7 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl, const s
 
     std::vector<DxcDefine> dxcDefines;
 
-    //CComPtr<IDxcIncludeHandler> includeHandler = new hlsl::ScIncludeHandler(std::move(hlsl::DefaultLoadCallback));
-    CComPtr<IDxcIncludeHandler> includeHandler = nullptr;
+    CComPtr<IDxcIncludeHandler> includeHandler = new hlsl::ScIncludeHandler(std::move(hlsl::DefaultLoadCallback));
     CComPtr<IDxcOperationResult> compileResult;
     IFT(shadertrans::CompilerDX::Instance().Compiler()->Compile(sourceBlob, nullptr, entryPointUtf16.c_str(), shaderProfile.c_str(),
         dxcArgs.data(), static_cast<UINT32>(dxcArgs.size()), dxcDefines.data(),

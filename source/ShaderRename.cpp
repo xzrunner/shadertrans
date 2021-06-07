@@ -16,7 +16,8 @@ static bool is_numeric(char c)
 namespace shadertrans
 {
 
-ShaderRename::ShaderRename(std::vector<unsigned int>& spirv)
+ShaderRename::ShaderRename(const std::vector<unsigned int>& spirv)
+    : m_spirv(spirv)
 {
     m_compiler = std::make_unique<spirv_cross::CompilerGLSL>(spirv);
 }
@@ -25,11 +26,9 @@ ShaderRename::~ShaderRename()
 {
 }
 
-bool ShaderRename::FillingUBOInstName()
+void ShaderRename::FillingUBOInstName()
 {
     spirv_cross::ShaderResources resources = m_compiler->get_shader_resources();
-
-    bool dirty = false;
 
     int idx = 0;
     for (auto& resource : resources.uniform_buffers)
@@ -40,18 +39,14 @@ bool ShaderRename::FillingUBOInstName()
         {
             std::string name = "u_" + base_name.substr(4);
             m_compiler->set_name(resource.id, name);
-            dirty = true;
+            m_dirty = true;
         }
     }
-
-    return dirty;
 }
 
-bool ShaderRename::RenameSampledImages()
+void ShaderRename::RenameSampledImages()
 {
     spirv_cross::ShaderResources resources = m_compiler->get_shader_resources();
-
-    bool dirty = false;
 
     int idx = 0;
     for (auto& img : resources.sampled_images) 
@@ -59,16 +54,18 @@ bool ShaderRename::RenameSampledImages()
         auto name = m_compiler->get_name(img.id);
         if (IsTemporaryName(name)) {
             m_compiler->set_name(img.id, "texture" + std::to_string(idx));
-            dirty = true;
+            m_dirty = true;
         }
         ++idx;
     }
-
-    return dirty;
 }
 
 std::vector<unsigned int> ShaderRename::GetResult(ShaderStage stage)
 {
+    if (!m_dirty) {
+        return m_spirv;
+    }
+
     m_compiler->build_combined_image_samplers();
     auto glsl = m_compiler->compile();
 

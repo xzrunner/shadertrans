@@ -14,18 +14,21 @@ namespace shadertrans
 class ShaderRename
 {
 public:
-	ShaderRename(std::vector<unsigned int>& spirv);
+	ShaderRename(const std::vector<unsigned int>& spirv);
 	~ShaderRename();
 
-	bool FillingUBOInstName();
-	bool RenameSampledImages();
+	void FillingUBOInstName();
+	void RenameSampledImages();
 
 	std::vector<unsigned int> GetResult(ShaderStage stage);
 
 	static bool IsTemporaryName(const std::string& name);
 
 private:
+	const std::vector<unsigned int>& m_spirv;
 	std::unique_ptr<spirv_cross::CompilerGLSL> m_compiler;
+
+	bool m_dirty = false;
 
 }; // ShaderRename
 

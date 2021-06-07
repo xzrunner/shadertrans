@@ -374,7 +374,11 @@ std::vector<uint32_t> ShaderBuilder::Link()
 
 	std::vector<uint32_t> spv;
 	spv_result_t status = spvtools::Link(context, contents, &spv, options);
-	ShaderRename::FillingUBOInstName(ShaderStage::PixelShader, spv);
+
+	ShaderRename rename(spv);
+	rename.FillingUBOInstName();
+	rename.RenameSampledImages();
+	spv = rename.GetResult(ShaderStage::PixelShader);
 
 #ifdef SHADER_DEBUG_PRINT
 	std::string glsl;

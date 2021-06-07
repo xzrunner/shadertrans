@@ -3,43 +3,94 @@
 
 #include <spirv_glsl.hpp>
 
+namespace
+{
+
+static bool is_numeric(char c)
+{
+	return c >= '0' && c <= '9';
+}
+
+}
+
 namespace shadertrans
 {
 
-bool ShaderRename::FillingUBOInstName(ShaderStage stage, std::vector<unsigned int>& spirv)
+ShaderRename::ShaderRename(std::vector<unsigned int>& spirv)
 {
-    spirv_cross::CompilerGLSL compiler(spirv);
-    spirv_cross::ShaderResources resources = compiler.get_shader_resources();
+    m_compiler = std::make_unique<spirv_cross::CompilerGLSL>(spirv);
+}
+
+ShaderRename::~ShaderRename()
+{
+}
+
+bool ShaderRename::FillingUBOInstName()
+{
+    spirv_cross::ShaderResources resources = m_compiler->get_shader_resources();
 
     bool dirty = false;
 
     int idx = 0;
     for (auto& resource : resources.uniform_buffers)
     {
-        auto ubo_name = compiler.get_name(resource.id);
-        auto base_name = compiler.get_name(resource.base_type_id);
+        auto ubo_name = m_compiler->get_name(resource.id);
+        auto base_name = m_compiler->get_name(resource.base_type_id);
         if (ubo_name.empty() && strncmp(base_name.c_str(), "UBO_", 4) == 0)
         {
             std::string name = "u_" + base_name.substr(4);
-            compiler.set_name(resource.id, name);
+            m_compiler->set_name(resource.id, name);
             dirty = true;
         }
     }
 
-    if (!dirty) {
-        return false;
+    return dirty;
+}
+
+bool ShaderRename::RenameSampledImages()
+{
+    spirv_cross::ShaderResources resources = m_compiler->get_shader_resources();
+
+    bool dirty = false;
+
+    int idx = 0;
+    for (auto& img : resources.sampled_images) 
+    {
+        auto name = m_compiler->get_name(img.id);
+        if (IsTemporaryName(name)) {
+            m_compiler->set_name(img.id, "texture" + std::to_string(idx));
+            dirty = true;
+        }
+        ++idx;
     }
 
-    auto glsl = compiler.compile();
+    return dirty;
+}
+
+std::vector<unsigned int> ShaderRename::GetResult(ShaderStage stage)
+{
+    m_compiler->build_combined_image_samplers();
+    auto glsl = m_compiler->compile();
 
     std::vector<unsigned int> ret;
     ShaderTrans::GLSL2SpirV(stage, glsl, ret);
-    if (ret.empty()) {
+    return ret;
+}
+
+// from spirv-cross
+bool ShaderRename::IsTemporaryName(const std::string& name)
+{
+    if (name.size() < 2)
         return false;
-    } else {
-        spirv = ret;
-        return true;
-    }
+
+    if (name[0] != '_' || !is_numeric(name[1]))
+        return false;
+
+    size_t index = 2;
+    while (index < name.size() && is_numeric(name[index]))
+        index++;
+
+    return index == name.size() || (index < name.size() && name[index] == '_');
 }
 
 }

@@ -2,6 +2,7 @@
 #include "shadertrans/ShaderTrans.h"
 #include "shadertrans/spirv_IR.h"
 #include "shadertrans/spirv_Parser.h"
+#include "shadertrans/ShaderRename.h"
 
 #include <spirv.hpp>
 #include <spirv_glsl.hpp>
@@ -430,13 +431,20 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 		uint32_t binding = compiler.get_decoration(resource.id, ::spv::DecorationBinding);		
     }
 
+    int idx = 0;
 	for (auto& resource : resources.sampled_images)
 	{
 		Variable unif;
 
 		spirv_cross::SPIRType type = compiler.get_type(resource.base_type_id);
 
-		unif.name = compiler.get_name(resource.id);
+        auto name = compiler.get_name(resource.id);
+        if (ShaderRename::IsTemporaryName(name)) {
+            name = "texture" + std::to_string(idx);
+        }
+
+		unif.name = name;
+
 		uint32_t set = compiler.get_decoration(resource.id, ::spv::DecorationDescriptorSet);
 		uint32_t binding = compiler.get_decoration(resource.id, ::spv::DecorationBinding);
 
@@ -444,6 +452,8 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 		unif.type = VarType::Sampler;
 
 		uniforms.push_back(unif);
+
+        ++idx;
 	}
 
 	for (auto& resource : resources.storage_images)

@@ -271,8 +271,6 @@ ShaderBuilder::AddModule(ShaderStage stage, const std::string& _code, const std:
 
 	module->impl = spv_module;
 
-	//Print(*module);
-
 	m_modules.push_back(module);
 
 	return module;
@@ -328,69 +326,8 @@ void ShaderBuilder::FinishMain()
 
 std::vector<uint32_t> ShaderBuilder::Link()
 {
-	ResetState();
-
-	const spvtools::MessageConsumer consumer = [](spv_message_level_t level,
-        const char*,
-        const spv_position_t& position,
-        const char* message) {
-            switch (level) {
-            case SPV_MSG_FATAL:
-            case SPV_MSG_INTERNAL_ERROR:
-            case SPV_MSG_ERROR:
-                std::cerr << "error: " << position.index << ": " << message
-                    << std::endl;
-                break;
-            case SPV_MSG_WARNING:
-                std::cout << "warning: " << position.index << ": " << message
-                    << std::endl;
-                break;
-            case SPV_MSG_INFO:
-                std::cout << "info: " << position.index << ": " << message << std::endl;
-                break;
-            default:
-                break;
-            }
-    };
-	spvtools::Context context(SPV_ENV_UNIVERSAL_1_5);
-	context.SetMessageConsumer(consumer);
-
-    std::vector<std::vector<unsigned int>> contents;
-    for (auto& module : m_modules)
-	{
-		std::vector<unsigned int> spv;
-		spvgentwo::BinaryVectorWriter writer(spv);
-		module->impl->write(writer);
-        contents.emplace_back(spv);
-    }
-	{
-		std::vector<unsigned int> spv;
-		spvgentwo::BinaryVectorWriter writer(spv);
-		m_main->write(writer);
-		contents.emplace_back(spv);
-	}
-
-    spvtools::LinkerOptions options;
-
-	std::vector<uint32_t> spv;
-	spv_result_t status = spvtools::Link(context, contents, &spv, options);
-
-	ShaderRename rename(spv);
-	rename.FillingUBOInstName();
-	rename.RenameSampledImages();
-	spv = rename.GetResult(ShaderStage::PixelShader);
-
-#ifdef SHADER_DEBUG_PRINT
-	std::string glsl;
-	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
-	printf("%s\n", glsl.c_str());
-
-	std::string dis;
-	SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
-	printf("%s\n", dis.c_str());
-#endif // SHADER_DEBUG_PRINT
-
-	return spv;
+	return LinkSpvtools();
+	//return LinkSpvgentwo();
 }
 
 std::string ShaderBuilder::ConnectCSMain(const std::string& main_glsl)
@@ -459,6 +396,120 @@ std::shared_ptr<ShaderBuilder::Module> ShaderBuilder::FindModule(const std::stri
 		}
 	}
 	return nullptr;
+}
+
+std::vector<uint32_t> ShaderBuilder::LinkSpvtools()
+{
+	ResetState();
+
+	const spvtools::MessageConsumer consumer = [](spv_message_level_t level,
+        const char*,
+        const spv_position_t& position,
+        const char* message) {
+            switch (level) {
+            case SPV_MSG_FATAL:
+            case SPV_MSG_INTERNAL_ERROR:
+            case SPV_MSG_ERROR:
+                std::cerr << "error: " << position.index << ": " << message
+                    << std::endl;
+                break;
+            case SPV_MSG_WARNING:
+                std::cout << "warning: " << position.index << ": " << message
+                    << std::endl;
+                break;
+            case SPV_MSG_INFO:
+                std::cout << "info: " << position.index << ": " << message << std::endl;
+                break;
+            default:
+                break;
+            }
+    };
+	spvtools::Context context(SPV_ENV_UNIVERSAL_1_5);
+	context.SetMessageConsumer(consumer);
+
+    std::vector<std::vector<unsigned int>> contents;
+    for (auto& module : m_modules)
+	{
+		std::vector<unsigned int> spv;
+		spvgentwo::BinaryVectorWriter writer(spv);
+		module->impl->write(writer);
+        contents.emplace_back(spv);
+    }
+	{
+		std::vector<unsigned int> spv;
+		spvgentwo::BinaryVectorWriter writer(spv);
+		m_main->write(writer);
+		contents.emplace_back(spv);
+	}
+
+    spvtools::LinkerOptions options;
+
+	std::vector<uint32_t> spv;
+	spv_result_t status = spvtools::Link(context, contents, &spv, options);
+
+	ShaderRename rename(spv);
+	rename.FillingUBOInstName();
+	rename.RenameSampledImages();
+	spv = rename.GetResult(ShaderStage::PixelShader);
+
+#ifdef SHADER_DEBUG_PRINT
+	std::string glsl;
+	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
+	printf("%s\n", glsl.c_str());
+
+	std::string dis;
+	SpirvTools::Disassemble(spv.data(), spv.size(), &dis);
+	printf("%s\n", dis.c_str());
+#endif // SHADER_DEBUG_PRINT
+
+	return spv;
+}
+
+std::vector<uint32_t> ShaderBuilder::LinkSpvgentwo()
+{
+	ResetState();
+
+	auto printer = spvgentwo::ModulePrinter::ModuleSimpleFuncPrinter([](const char* str) {
+		printf("%s", str);
+
+#ifdef _WIN32
+		OutputDebugStringA(str);
+#endif
+		});
+
+	spvgentwo::LinkerHelper::LinkerOptions options{};
+	options.flags = spvgentwo::LinkerHelper::LinkerOptionBits::All;
+	options.grammar = m_gram.get();
+	options.printer = &printer;
+	options.allocator = m_alloc.get();
+
+	std::vector<unsigned int> spv;
+
+	bool success = true;
+	for (auto& module : m_modules) {
+		success &= spvgentwo::LinkerHelper::import(*module->impl, *m_main, options);
+	}
+
+	if (success == false) {
+		return spv;
+	}
+
+	//m_main->finalizeEntryPoints();
+
+
+	spvgentwo::BinaryVectorWriter writer(spv);
+	// don't need to call assignIDs, we are using AssignResultIDs
+	if (m_main->write(writer) == false) {
+		return spv;
+	}
+
+#ifdef SHADER_DEBUG_PRINT
+	std::string glsl;
+	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
+	printf("%s\n", glsl.c_str());
+#endif // SHADER_DEBUG_PRINT
+
+	return spv;
 }
 
 }

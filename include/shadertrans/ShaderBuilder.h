@@ -66,6 +66,9 @@ private:
 
 	std::shared_ptr<Module> FindModule(const std::string& name) const;
 
+	std::vector<uint32_t> LinkSpvtools();
+	std::vector<uint32_t> LinkSpvgentwo();
+
 private:
 	std::unique_ptr<spvgentwo::ConsoleLogger> m_logger;
 	std::unique_ptr<spvgentwo::HeapAllocator> m_alloc;

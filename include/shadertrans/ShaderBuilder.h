@@ -52,8 +52,6 @@ public:
 
 	void AddLinkDecl(spvgentwo::Function* func, const std::string& name, bool is_export);
 
-	void ImportAll();
-	void FinishMain();
 	std::vector<uint32_t> Link();
 	std::string ConnectCSMain(const std::string& glsl);
 

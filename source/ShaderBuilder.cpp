@@ -297,35 +297,10 @@ void ShaderBuilder::AddLinkDecl(spvgentwo::Function* func, const std::string& na
 	}
 }
 
-void ShaderBuilder::ImportAll()
-{
-	auto printer = spvgentwo::ModulePrinter::ModuleSimpleFuncPrinter([](const char* str) {
-		printf("%s", str);
-
-#ifdef _WIN32
-		OutputDebugStringA(str);
-#endif
-		});
-
-	spvgentwo::LinkerHelper::LinkerOptions options{};
-	options.flags = spvgentwo::LinkerHelper::LinkerOptionBits::All;
-	options.grammar = m_gram.get();
-	options.printer = &printer;
-	options.allocator = m_alloc.get();
-
-	for (auto& module : m_modules) {
-		spvgentwo::LinkerHelper::import(*module->impl, *m_main, options);
-	}
-}
-
-void ShaderBuilder::FinishMain()
-{
-	m_main->finalizeEntryPoints();
-	m_main->assignIDs(m_gram.get());
-}
-
 std::vector<uint32_t> ShaderBuilder::Link()
 {
+	m_main->assignIDs(m_gram.get());
+
 	return LinkSpvtools();
 	//return LinkSpvgentwo();
 }

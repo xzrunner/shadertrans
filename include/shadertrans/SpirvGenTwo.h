@@ -83,7 +83,7 @@ public:
 
 	// tools
 
-	static void Print(const spvgentwo::Module& module, bool output_ir = false);
+	static void Print(spvgentwo::Module& module);
 
 }; // SpirvGenTwo
 

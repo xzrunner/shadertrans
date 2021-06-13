@@ -6,6 +6,7 @@
 namespace spvgentwo { 
 	class Module;
 	class Function;
+	class BasicBlock;
 	class Instruction; 
 }
 
@@ -20,6 +21,9 @@ public:
 	static const char* GetType(const spvgentwo::Instruction& inst);
 	static bool IsVector(const spvgentwo::Instruction& inst);
 	static int GetVectorNum(const spvgentwo::Instruction& inst);
+
+	// block
+	static spvgentwo::BasicBlock* GetFuncBlock(spvgentwo::Function* func);
 
 	// inst
 
@@ -48,10 +52,15 @@ public:
 	static spvgentwo::Instruction* Load(spvgentwo::Function* func, spvgentwo::Instruction* var);
 	static spvgentwo::Instruction* ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv, spvgentwo::Instruction* lod);
 
+	static spvgentwo::BasicBlock* If(spvgentwo::Function* func, spvgentwo::Instruction* cond,
+		spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false);
+
 	static spvgentwo::Instruction* VariableFloat(spvgentwo::Function* func);
 	static spvgentwo::Instruction* VariableFloat2(spvgentwo::Function* func);
 	static spvgentwo::Instruction* VariableFloat3(spvgentwo::Function* func);
 	static spvgentwo::Instruction* VariableFloat4(spvgentwo::Function* func);
+
+	static spvgentwo::BasicBlock* AddBlock(spvgentwo::Function* func, const char* name);
 
 	static spvgentwo::Instruction* AddVariable(spvgentwo::Function* func, const char* name, spvgentwo::Instruction* value);
 
@@ -66,6 +75,22 @@ public:
 	static spvgentwo::Instruction* ConstMatrix2(spvgentwo::Module* module, const float m[4]);
 	static spvgentwo::Instruction* ConstMatrix3(spvgentwo::Module* module, const float m[9]);
 	static spvgentwo::Instruction* ConstMatrix4(spvgentwo::Module* module, const float m[16]);
+
+	// bb
+
+	static spvgentwo::Instruction* IsEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* IsNotEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* IsGreater(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* IsGreaterEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* IsLess(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* IsLessEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+
+	static void Kill(spvgentwo::BasicBlock* bb);
+
+	static void Return(spvgentwo::BasicBlock* bb);
+	static void ReturnValue(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* inst);
+
+	static void Store(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
 
 	// func
 

@@ -221,6 +221,13 @@ int SpirvGenTwo::GetVectorNum(const spvgentwo::Instruction& inst)
 	return inst.getType()->getVectorComponentCount();
 }
 
+// block
+spvgentwo::BasicBlock* SpirvGenTwo::GetFuncBlock(spvgentwo::Function* func)
+{
+	spvgentwo::BasicBlock& bb = *func;
+	return &bb;
+}
+
 // inst
 
 spvgentwo::Instruction* SpirvGenTwo::AccessChain(spvgentwo::Function* func, 
@@ -477,6 +484,36 @@ spvgentwo::Instruction* SpirvGenTwo::ImageSample(spvgentwo::Function* func, spvg
 	}
 }
 
+spvgentwo::BasicBlock* SpirvGenTwo::If(spvgentwo::Function* func, spvgentwo::Instruction* cond, 
+	                                   spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false)
+{
+	if (!cond || !bb_true) {
+		return nullptr;
+	}
+
+	BasicBlock& bb_merge = func->addBasicBlock("if_merge");
+
+	spvgentwo::BasicBlock& bb = *func;
+	bb.addInstruction()->opSelectionMerge(&bb_merge, spvgentwo::spv::SelectionControlMask::MaskNone);
+	if (bb_false) {
+		bb.addInstruction()->opBranchConditional(cond, bb_true, bb_false);
+	} else {
+		bb.addInstruction()->opBranchConditional(cond, bb_true, &bb_merge);
+	}
+
+	// check if user didnt exit controlflow via kill or similar
+	if (bb_true && bb_true->empty() == false && bb_true->back().isTerminator() == false) {
+		(*bb_true)->opBranch(&bb_merge);
+	}
+	if (bb_false && bb_false->empty() == false && bb_false->back().isTerminator() == false) {
+		(*bb_false)->opBranch(&bb_merge);
+	}
+
+	bb_merge.returnValue();
+
+	return &bb_merge;
+}
+
 spvgentwo::Instruction* SpirvGenTwo::VariableFloat(spvgentwo::Function* func)
 {
 	return func->variable<float>();
@@ -495,6 +532,15 @@ spvgentwo::Instruction* SpirvGenTwo::VariableFloat3(spvgentwo::Function* func)
 spvgentwo::Instruction* SpirvGenTwo::VariableFloat4(spvgentwo::Function* func)
 {
 	return func->variable<spvgentwo::glsl::vec4>();
+}
+
+spvgentwo::BasicBlock* SpirvGenTwo::AddBlock(spvgentwo::Function* func, const char* name)
+{
+	auto& ret = func->addBasicBlock(name);
+	//ret.returnValue();
+	return &ret;
+
+//	return func->addBasicBlock(name);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::AddVariable(spvgentwo::Function* func, const char* name, spvgentwo::Instruction* value)
@@ -587,6 +633,81 @@ spvgentwo::Instruction* SpirvGenTwo::ConstMatrix4(spvgentwo::Module* module, con
 	float m2[4][4];
 	memcpy(m2, m, sizeof(float) * 16);
 	return module->constant(spvgentwo::make_matrix(m2));
+}
+
+// bb
+
+spvgentwo::Instruction* SpirvGenTwo::IsEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->Equal(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::IsNotEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->NotEqual(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::IsGreater(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->Greater(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::IsGreaterEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->GreaterEqual(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::IsLess(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->Less(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::IsLessEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->LessEqual(a, b);
+}
+
+void SpirvGenTwo::Kill(spvgentwo::BasicBlock* bb)
+{
+	(*bb)->opKill();
+}
+
+void SpirvGenTwo::Return(spvgentwo::BasicBlock* bb)
+{
+	if (bb->empty() || !bb->back().isTerminator()) {
+		(*bb)->opReturn();
+	}
+}
+
+void SpirvGenTwo::ReturnValue(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* inst)
+{
+	(*bb)->opReturnValue(inst);
+}
+
+void SpirvGenTwo::Store(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
+{
+	if (!dst || !src) {
+		return;
+	}
+	(*bb)->opStore(dst, src);
 }
 
 // func
@@ -701,7 +822,14 @@ spvgentwo::Instruction* SpirvGenTwo::FuncCall(spvgentwo::Function* caller, spvge
 
 void SpirvGenTwo::Return(spvgentwo::Function* func)
 {
-	(*func)->opReturn();
+	if (func->empty()) {
+		(*func)->opReturn();
+	} else {
+		auto& end = func->back();
+		if (end.empty() || !end.back().isTerminator()) {
+			(*func)->opReturn();
+		}
+	}
 }
 
 void SpirvGenTwo::ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* inst)

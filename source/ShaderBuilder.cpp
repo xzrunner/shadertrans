@@ -421,6 +421,9 @@ std::vector<uint32_t> ShaderBuilder::LinkSpvtools()
 
 	std::vector<uint32_t> spv;
 	spv_result_t status = spvtools::Link(context, contents, &spv, options);
+	if (spv.empty()) {
+		return spv;
+	}
 
 	ShaderRename rename(spv);
 	rename.FillingUBOInstName();

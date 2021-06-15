@@ -230,275 +230,20 @@ spvgentwo::BasicBlock* SpirvGenTwo::GetFuncBlock(spvgentwo::Function* func)
 
 // inst
 
-spvgentwo::Instruction* SpirvGenTwo::AccessChain(spvgentwo::Function* func, 
-	                                             spvgentwo::Instruction* base, 
-	                                             unsigned int index)
-{
-	if (!base) {
-		return nullptr;
-	}
-	return (*func)->opAccessChain(base, index);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::ComposeFloat2(spvgentwo::Function* func,
-	                                               spvgentwo::Instruction* x,
-	                                               spvgentwo::Instruction* y)
-{
-	if (!x || !y) {
-		return nullptr;
-	}
-	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 2>>();
-	return (*func)->opCompositeConstruct(type, x, y);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::ComposeFloat3(spvgentwo::Function* func, 
-	                                               spvgentwo::Instruction* x,
-	                                               spvgentwo::Instruction* y, 
-	                                               spvgentwo::Instruction* z)
-{
-	if (!x || !y || !z) {
-		return nullptr;
-	}
-	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 3>>();
-	return (*func)->opCompositeConstruct(type, x, y, z);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::ComposeFloat4(spvgentwo::Function* func, 
-	                                               spvgentwo::Instruction* x,
-	                                               spvgentwo::Instruction* y, 
-	                                               spvgentwo::Instruction* z,
-	                                               spvgentwo::Instruction* w)
-{
-	if (!x || !y || !z || !w) {
-		return nullptr;
-	}
-	spvgentwo::Instruction* type = (*func)->getModule()->type<spvgentwo::vector_t<float, 4>>();
-	return (*func)->opCompositeConstruct(type, x, y, z, w);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::ComposeExtract(spvgentwo::Function* func,
-	                                                spvgentwo::Instruction* comp, 
-	                                                unsigned int index)
-{
-	if (!comp) {
-		return nullptr;
-	}
-	return (*func)->opCompositeExtract(comp, index);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Dot(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{
-	if (!a || !b) {
-		return nullptr;
-	}
-	return (*func)->opDot(a, b);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Cross(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{
-	if (!a || !b) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	return bb.ext<spvgentwo::ext::GLSL>()->opCross(a, b);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{
-	if (!a || !b) {
-		return nullptr;
-	}
-	return (*func)->Add(a, b);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{	
-	if (!a || !b) {
-		return nullptr;
-	}
-	return (*func)->Sub(a, b);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{
-	if (!a || !b) {
-		return nullptr;
-	}
-	return (*func)->Mul(a, b);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{
-	if (!a || !b) {
-		return nullptr;
-	}
-	return (*func)->Div(a, b);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Negate(spvgentwo::Function* func, spvgentwo::Instruction* v)
-{
-	if (!v) {
-		return nullptr;
-	}
-	if (v->getType()->isFloat()) {
-		return (*func)->opFNegate(v);
-	} else if (v->getType()->isInt()) {
-		return (*func)->opSNegate(v);
-	} else {
-		return nullptr;
-	}
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Reflect(spvgentwo::Function* func, spvgentwo::Instruction* I, spvgentwo::Instruction* N)
-{
-	if (!I || !N) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	return bb.ext<spvgentwo::ext::GLSL>()->opReflect(I, N);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Sqrt(spvgentwo::Function* func, spvgentwo::Instruction* v)
-{
-	if (!v) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	return bb.ext<spvgentwo::ext::GLSL>()->opSqrt(v);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y)
-{
-	if (!x || !y) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	return bb.ext<spvgentwo::ext::GLSL>()->opPow(x, y);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v)
-{
-	if (!v || !IsVector(*v)) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	return bb.ext<spvgentwo::ext::GLSL>()->opNormalize(v);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Length(spvgentwo::Function* func, spvgentwo::Instruction* v)
-{
-	if (!v || !IsVector(*v)) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	return bb.ext<spvgentwo::ext::GLSL>()->opLength(v);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{
-	if (!a || !b) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	if (a->getType()->isFloat()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opFMax(a, b);
-	} else if (a->getType()->isInt()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opSMax(a, b);
-	} else if (a->getType()->isUnsigned()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opUMax(a, b);
-	} else {
-		return nullptr;
-	}
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Min(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
-{
-	if (!a || !b) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	if (a->getType()->isFloat()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opFMin(a, b);
-	} else if (a->getType()->isInt()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opSMin(a, b);
-	} else if (a->getType()->isUnsigned()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opUMin(a, b);
-	} else {
-		return nullptr;
-	}
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Clamp(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* min, spvgentwo::Instruction* max)
-{
-	if (!x || !min || !max) {
-		return nullptr;
-	}
-
-	spvgentwo::BasicBlock& bb = *func;
-	if (x->getType()->isFloat()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opFClamp(x, min, max);
-	} else if (x->getType()->isInt()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opSClamp(x, min, max);
-	} else if (x->getType()->isUnsigned()) {
-		return bb.ext<spvgentwo::ext::GLSL>()->opUClamp(x, min, max);
-	} else {
-		return nullptr;
-	}
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Mix(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a)
-{
-	if (!x || !y || !a) {
-		return nullptr;
-	}
-	spvgentwo::BasicBlock& bb = *func;
-	return bb.ext<spvgentwo::ext::GLSL>()->opFMix(x, y, a);
-}
-
-void SpirvGenTwo::Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
-{
-	if (!dst || !src) {
-		return;
-	}
-	(*func)->opStore(dst, src);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::Load(spvgentwo::Function* func, spvgentwo::Instruction* var)
-{
-	if (!var) {
-		return nullptr;
-	}
-	return (*func)->opLoad(var);
-}
-
-spvgentwo::Instruction* SpirvGenTwo::ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv, spvgentwo::Instruction* lod)
-{
-	if (!img || !uv) {
-		return nullptr;
-	}
-
-	if (lod) {
-		return (*func)->opImageSampleExplicitLodLevel(img, uv, lod);
-	} else {
-		return (*func)->opImageSampleImplictLod(img, uv);
-	}
-}
-
-spvgentwo::BasicBlock* SpirvGenTwo::If(spvgentwo::Function* func, spvgentwo::Instruction* cond, 
+spvgentwo::BasicBlock* SpirvGenTwo::If(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* cond,
 	                                   spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false)
 {
 	if (!cond || !bb_true) {
 		return nullptr;
 	}
 
-	BasicBlock& bb_merge = func->addBasicBlock("if_merge");
+	BasicBlock& bb_merge = bb->getFunction()->addBasicBlock("if_merge");
 
-	spvgentwo::BasicBlock& bb = *func;
-	bb.addInstruction()->opSelectionMerge(&bb_merge, spvgentwo::spv::SelectionControlMask::MaskNone);
+	bb->addInstruction()->opSelectionMerge(&bb_merge, spvgentwo::spv::SelectionControlMask::MaskNone);
 	if (bb_false) {
-		bb.addInstruction()->opBranchConditional(cond, bb_true, bb_false);
+		bb->addInstruction()->opBranchConditional(cond, bb_true, bb_false);
 	} else {
-		bb.addInstruction()->opBranchConditional(cond, bb_true, &bb_merge);
+		bb->addInstruction()->opBranchConditional(cond, bb_true, &bb_merge);
 	}
 
 	// check if user didnt exit controlflow via kill or similar
@@ -536,11 +281,7 @@ spvgentwo::Instruction* SpirvGenTwo::VariableFloat4(spvgentwo::Function* func)
 
 spvgentwo::BasicBlock* SpirvGenTwo::AddBlock(spvgentwo::Function* func, const char* name)
 {
-	auto& ret = func->addBasicBlock(name);
-	//ret.returnValue();
-	return &ret;
-
-//	return func->addBasicBlock(name);
+	return &func->addBasicBlock(name);
 }
 
 spvgentwo::Instruction* SpirvGenTwo::AddVariable(spvgentwo::Function* func, const char* name, spvgentwo::Instruction* value)
@@ -637,6 +378,221 @@ spvgentwo::Instruction* SpirvGenTwo::ConstMatrix4(spvgentwo::Module* module, con
 
 // bb
 
+spvgentwo::Instruction* SpirvGenTwo::AccessChain(spvgentwo::BasicBlock* bb, 
+	                                             spvgentwo::Instruction* base, 
+	                                             unsigned int index)
+{
+	if (!base) {
+		return nullptr;
+	}
+	return (*bb)->opAccessChain(base, index);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::ComposeFloat2(spvgentwo::BasicBlock* bb,
+	                                               spvgentwo::Instruction* x,
+	                                               spvgentwo::Instruction* y)
+{
+	if (!x || !y) {
+		return nullptr;
+	}
+	spvgentwo::Instruction* type = (*bb)->getModule()->type<spvgentwo::vector_t<float, 2>>();
+	return (*bb)->opCompositeConstruct(type, x, y);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::ComposeFloat3(spvgentwo::BasicBlock* bb, 
+	                                               spvgentwo::Instruction* x,
+	                                               spvgentwo::Instruction* y, 
+	                                               spvgentwo::Instruction* z)
+{
+	if (!x || !y || !z) {
+		return nullptr;
+	}
+	spvgentwo::Instruction* type = (*bb)->getModule()->type<spvgentwo::vector_t<float, 3>>();
+	return (*bb)->opCompositeConstruct(type, x, y, z);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::ComposeFloat4(spvgentwo::BasicBlock* bb, 
+	                                               spvgentwo::Instruction* x,
+	                                               spvgentwo::Instruction* y, 
+	                                               spvgentwo::Instruction* z,
+	                                               spvgentwo::Instruction* w)
+{
+	if (!x || !y || !z || !w) {
+		return nullptr;
+	}
+	spvgentwo::Instruction* type = (*bb)->getModule()->type<spvgentwo::vector_t<float, 4>>();
+	return (*bb)->opCompositeConstruct(type, x, y, z, w);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::ComposeExtract(spvgentwo::BasicBlock* bb,
+	                                                spvgentwo::Instruction* comp, 
+	                                                unsigned int index)
+{
+	if (!comp) {
+		return nullptr;
+	}
+	return (*bb)->opCompositeExtract(comp, index);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Dot(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->opDot(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Cross(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return bb->ext<spvgentwo::ext::GLSL>()->opCross(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Add(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->Add(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Sub(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->Sub(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Mul(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->Mul(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Div(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	return (*bb)->Div(a, b);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Negate(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* v)
+{
+	if (!v) {
+		return nullptr;
+	}
+	if (v->getType()->isFloat()) {
+		return (*bb)->opFNegate(v);
+	} else if (v->getType()->isInt()) {
+		return (*bb)->opSNegate(v);
+	} else {
+		return nullptr;
+	}
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Reflect(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* I, spvgentwo::Instruction* N)
+{
+	if (!I || !N) {
+		return nullptr;
+	}
+	return bb->ext<spvgentwo::ext::GLSL>()->opReflect(I, N);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Sqrt(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* v)
+{
+	if (!v) {
+		return nullptr;
+	}
+	return bb->ext<spvgentwo::ext::GLSL>()->opSqrt(v);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Pow(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* y)
+{
+	if (!x || !y) {
+		return nullptr;
+	}
+	return bb->ext<spvgentwo::ext::GLSL>()->opPow(x, y);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Normalize(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* v)
+{
+	if (!v || !IsVector(*v)) {
+		return nullptr;
+	}
+	return bb->ext<spvgentwo::ext::GLSL>()->opNormalize(v);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Length(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* v)
+{
+	if (!v || !IsVector(*v)) {
+		return nullptr;
+	}
+	return bb->ext<spvgentwo::ext::GLSL>()->opLength(v);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Max(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	if (a->getType()->isFloat()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opFMax(a, b);
+	} else if (a->getType()->isInt()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opSMax(a, b);
+	} else if (a->getType()->isUnsigned()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opUMax(a, b);
+	} else {
+		return nullptr;
+	}
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Min(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
+{
+	if (!a || !b) {
+		return nullptr;
+	}
+	if (a->getType()->isFloat()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opFMin(a, b);
+	} else if (a->getType()->isInt()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opSMin(a, b);
+	} else if (a->getType()->isUnsigned()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opUMin(a, b);
+	} else {
+		return nullptr;
+	}
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Clamp(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* min, spvgentwo::Instruction* max)
+{
+	if (!x || !min || !max) {
+		return nullptr;
+	}
+
+	if (x->getType()->isFloat()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opFClamp(x, min, max);
+	} else if (x->getType()->isInt()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opSClamp(x, min, max);
+	} else if (x->getType()->isUnsigned()) {
+		return bb->ext<spvgentwo::ext::GLSL>()->opUClamp(x, min, max);
+	} else {
+		return nullptr;
+	}
+}
+
+spvgentwo::Instruction* SpirvGenTwo::Mix(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a)
+{
+	if (!x || !y || !a) {
+		return nullptr;
+	}
+	return bb->ext<spvgentwo::ext::GLSL>()->opFMix(x, y, a);
+}
+
 spvgentwo::Instruction* SpirvGenTwo::IsEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b)
 {
 	if (!a || !b) {
@@ -702,12 +658,33 @@ void SpirvGenTwo::ReturnValue(spvgentwo::BasicBlock* bb, spvgentwo::Instruction*
 	(*bb)->opReturnValue(inst);
 }
 
+spvgentwo::Instruction* SpirvGenTwo::Load(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* var)
+{
+	if (!var) {
+		return nullptr;
+	}
+	return (*bb)->opLoad(var);
+}
+
 void SpirvGenTwo::Store(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* dst, spvgentwo::Instruction* src)
 {
 	if (!dst || !src) {
 		return;
 	}
 	(*bb)->opStore(dst, src);
+}
+
+spvgentwo::Instruction* SpirvGenTwo::ImageSample(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* img, spvgentwo::Instruction* uv, spvgentwo::Instruction* lod)
+{
+	if (!img || !uv) {
+		return nullptr;
+	}
+
+	if (lod) {
+		return (*bb)->opImageSampleExplicitLodLevel(img, uv, lod);
+	} else {
+		return (*bb)->opImageSampleImplictLod(img, uv);
+	}
 }
 
 // func
@@ -818,23 +795,6 @@ spvgentwo::Instruction* SpirvGenTwo::FuncCall(spvgentwo::Function* caller, spvge
 	default:
 		return nullptr;
 	}
-}
-
-void SpirvGenTwo::Return(spvgentwo::Function* func)
-{
-	if (func->empty()) {
-		(*func)->opReturn();
-	} else {
-		auto& end = func->back();
-		if (end.empty() || !end.back().isTerminator()) {
-			(*func)->opReturn();
-		}
-	}
-}
-
-void SpirvGenTwo::ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* inst)
-{
-	(*func)->opReturnValue(inst);
 }
 
 // tools

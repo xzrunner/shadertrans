@@ -134,9 +134,9 @@ spvgentwo::Instruction* ShaderBuilder::AddUniform(spvgentwo::Module* module, con
 
 	spvgentwo::Instruction* ret = nullptr;
 	if (type == "bool") {
-		ret = m_main->uniformConstant<bool>(name.c_str());
+		ret = module->uniformConstant<bool>(name.c_str());
 	} else if (type == "int") {
-		ret = m_main->uniformConstant<int>(name.c_str());
+		ret = module->uniformConstant<int>(name.c_str());
 	} else if (type == "float") {
 		ret = module->uniformConstant<float>(unif_name.c_str());
 	} else if (type == "vec2") {

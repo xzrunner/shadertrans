@@ -27,32 +27,7 @@ public:
 
 	// inst
 
-	static spvgentwo::Instruction* AccessChain(spvgentwo::Function* func, spvgentwo::Instruction* base, unsigned int index);
-	static spvgentwo::Instruction* ComposeFloat2(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
-	static spvgentwo::Instruction* ComposeFloat3(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* z);
-	static spvgentwo::Instruction* ComposeFloat4(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* z, spvgentwo::Instruction* w);
-	static spvgentwo::Instruction* ComposeExtract(spvgentwo::Function* func, spvgentwo::Instruction* comp, unsigned int index);
-	static spvgentwo::Instruction* Dot(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	static spvgentwo::Instruction* Cross(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	static spvgentwo::Instruction* Add(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	static spvgentwo::Instruction* Sub(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	static spvgentwo::Instruction* Mul(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	static spvgentwo::Instruction* Div(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	static spvgentwo::Instruction* Negate(spvgentwo::Function* func, spvgentwo::Instruction* v);
-	static spvgentwo::Instruction* Reflect(spvgentwo::Function* func, spvgentwo::Instruction* I, spvgentwo::Instruction* N);
-	static spvgentwo::Instruction* Sqrt(spvgentwo::Function* func, spvgentwo::Instruction* v);
-	static spvgentwo::Instruction* Pow(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
-	static spvgentwo::Instruction* Normalize(spvgentwo::Function* func, spvgentwo::Instruction* v);
-	static spvgentwo::Instruction* Length(spvgentwo::Function* func, spvgentwo::Instruction* v);
-	static spvgentwo::Instruction* Max(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	static spvgentwo::Instruction* Min(spvgentwo::Function* func, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
-	static spvgentwo::Instruction* Clamp(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* min, spvgentwo::Instruction* max);
-	static spvgentwo::Instruction* Mix(spvgentwo::Function* func, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a);
-	static void Store(spvgentwo::Function* func, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
-	static spvgentwo::Instruction* Load(spvgentwo::Function* func, spvgentwo::Instruction* var);
-	static spvgentwo::Instruction* ImageSample(spvgentwo::Function* func, spvgentwo::Instruction* img, spvgentwo::Instruction* uv, spvgentwo::Instruction* lod);
-
-	static spvgentwo::BasicBlock* If(spvgentwo::Function* func, spvgentwo::Instruction* cond,
+	static spvgentwo::BasicBlock* If(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* cond,
 		spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false);
 
 	static spvgentwo::Instruction* VariableFloat(spvgentwo::Function* func);
@@ -78,6 +53,28 @@ public:
 
 	// bb
 
+	static spvgentwo::Instruction* AccessChain(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* base, unsigned int index);
+	static spvgentwo::Instruction* ComposeFloat2(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
+	static spvgentwo::Instruction* ComposeFloat3(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* z);
+	static spvgentwo::Instruction* ComposeFloat4(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* z, spvgentwo::Instruction* w);
+	static spvgentwo::Instruction* ComposeExtract(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* comp, unsigned int index);
+	static spvgentwo::Instruction* Dot(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Cross(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Add(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Sub(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Mul(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Div(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Negate(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Reflect(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* I, spvgentwo::Instruction* N);
+	static spvgentwo::Instruction* Sqrt(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Pow(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* y);
+	static spvgentwo::Instruction* Normalize(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Length(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* v);
+	static spvgentwo::Instruction* Max(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Min(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
+	static spvgentwo::Instruction* Clamp(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* min, spvgentwo::Instruction* max);
+	static spvgentwo::Instruction* Mix(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* x, spvgentwo::Instruction* y, spvgentwo::Instruction* a);
+
 	static spvgentwo::Instruction* IsEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* IsNotEqual(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
 	static spvgentwo::Instruction* IsGreater(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* a, spvgentwo::Instruction* b);
@@ -90,7 +87,10 @@ public:
 	static void Return(spvgentwo::BasicBlock* bb);
 	static void ReturnValue(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* inst);
 
+	static spvgentwo::Instruction* Load(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* var);
 	static void Store(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* dst, spvgentwo::Instruction* src);
+
+	static spvgentwo::Instruction* ImageSample(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* img, spvgentwo::Instruction* uv, spvgentwo::Instruction* lod);
 
 	// func
 
@@ -103,8 +103,6 @@ public:
 	static spvgentwo::Instruction* GetFuncParam(spvgentwo::Function* func, int index);
 	static void GetFuncParamNames(spvgentwo::Function* func, std::vector<std::string>& names);
 	static spvgentwo::Instruction* FuncCall(spvgentwo::Function* caller, spvgentwo::Function* callee, const std::vector<spvgentwo::Instruction*>& params);
-	static void Return(spvgentwo::Function* func);
-	static void ReturnValue(spvgentwo::Function* func, spvgentwo::Instruction* inst);
 
 	// tools
 

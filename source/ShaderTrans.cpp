@@ -286,13 +286,16 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
 }
 
 void ShaderTrans::SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>& spirv,
-                             std::string& glsl, std::ostream& out)
+                             std::string& glsl, bool use_ubo, std::ostream& out)
 {
     try {
         spirv_cross::CompilerGLSL compiler(spirv);
 
         auto op = compiler.get_common_options();
-        op.emit_uniform_buffer_as_plain_uniforms = true;
+        if (!use_ubo) {
+            op.emit_push_constant_as_uniform_buffer  = true;
+            op.emit_uniform_buffer_as_plain_uniforms = true;
+        }
         compiler.set_common_options(op);
 
         try {

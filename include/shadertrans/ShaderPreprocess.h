@@ -1,5 +1,7 @@
 #pragma once
 
+#include "shadertrans/ShaderStage.h"
+
 #include <string>
 #include <vector>
 
@@ -9,7 +11,7 @@ namespace shadertrans
 class ShaderPreprocess
 {
 public:
-	static std::string PrepareGLSL(const std::string& source_code);
+	static std::string PrepareGLSL(ShaderStage stage, const std::string& source_code);
 
 	// todo: use IR info
 	// fix glsl code trans from hlsl

@@ -7,12 +7,16 @@
 namespace shadertrans
 {
 
-std::string ShaderPreprocess::PrepareGLSL(const std::string& source_code)
+std::string ShaderPreprocess::PrepareGLSL(ShaderStage stage, const std::string& source_code)
 {
 	std::string ret = source_code;
 
 	if (ret.find("#version") == std::string::npos) {
-		ret.insert(0, "#version 330 core\n");
+		if (stage == ShaderStage::ComputeShader) {
+			ret.insert(0, "#version 430\n");
+		} else {
+			ret.insert(0, "#version 330 core\n");
+		}
 	}
 
 	auto itr = ret.find("#include");

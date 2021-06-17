@@ -219,7 +219,7 @@ ShaderBuilder::AddModule(ShaderStage stage, const std::string& _code, const std:
 #else
 	std::string code = _code;
 	if (lang == "glsl") {
-		code = ShaderPreprocess::PrepareGLSL(code);
+		code = ShaderPreprocess::PrepareGLSL(stage, code);
 	}
 #endif // UNIQUE_INCLUDE_MODULE
 

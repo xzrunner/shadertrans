@@ -88,6 +88,18 @@ std::string ShaderPreprocess::ReplaceIncludes(const std::string& source_code)
 	}
 }
 
+void ShaderPreprocess::StringReplace(std::string& str, const std::string& from, const std::string& to)
+{
+	if (from.empty()) {
+		return;
+	}
+	size_t start_pos = 0;
+	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length();
+	}
+}
+
 std::string ShaderPreprocess::LoadWithInclude(std::istream& cin)
 {
 	std::string ret;
@@ -123,18 +135,6 @@ bool ShaderPreprocess::GetPathFromLine(const std::string& line, std::string& pat
 	path = line.substr(start + 1, end - start - 1);
 
 	return true;
-}
-
-void ShaderPreprocess::StringReplace(std::string& str, const std::string& from, const std::string& to)
-{
-	if (from.empty()) {
-		return;
-	}
-	size_t start_pos = 0;
-	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
-		str.replace(start_pos, from.length(), to);
-		start_pos += to.length();
-	}
 }
 
 }

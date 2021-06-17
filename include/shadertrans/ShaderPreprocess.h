@@ -22,12 +22,12 @@ public:
 
 	static std::string ReplaceIncludes(const std::string& source_code);
 
+	static void StringReplace(std::string& str, const std::string& from, const std::string& to);
+
 private:
 	static std::string LoadWithInclude(std::istream& cin);
 
 	static bool GetPathFromLine(const std::string& line, std::string& path);
-
-	static void StringReplace(std::string& str, const std::string& from, const std::string& to);
 
 }; // ShaderPreprocess
 

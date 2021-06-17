@@ -308,16 +308,40 @@ std::vector<uint32_t> ShaderBuilder::Link()
 std::string ShaderBuilder::ConnectCSMain(const std::string& main_glsl)
 {
 	auto spv = Link();
+	if (spv.empty()) {
+		return "";
+	}
 	
 	std::string glsl;
-	ShaderTrans::SpirV2GLSL(ShaderStage::PixelShader, spv, glsl);
+	ShaderTrans::SpirV2GLSL(ShaderStage::ComputeShader, spv, glsl, true);
+
+	auto main_pos = glsl.find("void main()");
+	if (main_pos == std::string::npos) {
+		return "";
+	}
+
+	std::string old_main = glsl.substr(main_pos);
+	{
+		auto b_pos = old_main.find_first_of("{") + 1;
+		auto e_pos = old_main.find_last_of("}");
+		old_main = old_main.substr(b_pos, e_pos - b_pos);
+	}
+
+	// fixme
+	if (old_main.size() < 3) {
+		return "";
+	}
 
 	std::string ret = "#version 430\n";
-	auto b_pos = glsl.find_first_of('\n');
-	auto e_pos = glsl.find("void main()");
-	ret += glsl.substr(b_pos, e_pos - b_pos);
-	ret += main_glsl;
-	
+	{
+		auto b_pos = glsl.find_first_of('\n');
+		auto e_pos = main_pos;
+		ret += glsl.substr(b_pos, e_pos - b_pos);
+		ret += main_glsl;
+	}
+
+	ShaderPreprocess::StringReplace(ret, "__ASSIGN_CS_OUT__", old_main);
+
 	return ret;
 }
 

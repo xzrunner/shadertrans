@@ -313,7 +313,7 @@ std::string ShaderBuilder::ConnectCSMain(const std::string& main_glsl)
 	}
 	
 	std::string glsl;
-	ShaderTrans::SpirV2GLSL(ShaderStage::ComputeShader, spv, glsl, true);
+	ShaderTrans::SpirV2GLSL(ShaderStage::ComputeShader, spv, glsl, false);
 
 	auto main_pos = glsl.find("void main()");
 	if (main_pos == std::string::npos) {

@@ -28,7 +28,7 @@ public:
 	// inst
 
 	static spvgentwo::BasicBlock* If(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* cond,
-		spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false);
+		spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false, spvgentwo::BasicBlock* bb_merge);
 
 	static spvgentwo::Instruction* VariableFloat(spvgentwo::Function* func, const char* name = nullptr);
 	static spvgentwo::Instruction* VariableFloat2(spvgentwo::Function* func, const char* name = nullptr);

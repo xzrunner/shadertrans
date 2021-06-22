@@ -231,32 +231,32 @@ spvgentwo::BasicBlock* SpirvGenTwo::GetFuncBlock(spvgentwo::Function* func)
 // inst
 
 spvgentwo::BasicBlock* SpirvGenTwo::If(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* cond,
-	                                   spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false)
+	                                   spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false, spvgentwo::BasicBlock* bb_merge)
 {
 	if (!cond || !bb_true) {
 		return nullptr;
 	}
 
-	BasicBlock& bb_merge = bb->getFunction()->addBasicBlock("if_merge");
+	if (!bb_merge) {
+		bb_merge = &bb->getFunction()->addBasicBlock("if_merge");
+	}
 
-	bb->addInstruction()->opSelectionMerge(&bb_merge, spvgentwo::spv::SelectionControlMask::MaskNone);
+	bb->addInstruction()->opSelectionMerge(bb_merge, spvgentwo::spv::SelectionControlMask::MaskNone);
 	if (bb_false) {
 		bb->addInstruction()->opBranchConditional(cond, bb_true, bb_false);
 	} else {
-		bb->addInstruction()->opBranchConditional(cond, bb_true, &bb_merge);
+		bb->addInstruction()->opBranchConditional(cond, bb_true, bb_merge);
 	}
 
 	// check if user didnt exit controlflow via kill or similar
 	if (bb_true && bb_true->empty() == false && bb_true->back().isTerminator() == false) {
-		(*bb_true)->opBranch(&bb_merge);
+		(*bb_true)->opBranch(bb_merge);
 	}
 	if (bb_false && bb_false->empty() == false && bb_false->back().isTerminator() == false) {
-		(*bb_false)->opBranch(&bb_merge);
+		(*bb_false)->opBranch(bb_merge);
 	}
 
-	bb_merge.returnValue();
-
-	return &bb_merge;
+	return bb_merge;
 }
 
 spvgentwo::Instruction* SpirvGenTwo::VariableFloat(spvgentwo::Function* func, const char* name)

@@ -30,10 +30,10 @@ public:
 	static spvgentwo::BasicBlock* If(spvgentwo::BasicBlock* bb, spvgentwo::Instruction* cond,
 		spvgentwo::BasicBlock* bb_true, spvgentwo::BasicBlock* bb_false);
 
-	static spvgentwo::Instruction* VariableFloat(spvgentwo::Function* func);
-	static spvgentwo::Instruction* VariableFloat2(spvgentwo::Function* func);
-	static spvgentwo::Instruction* VariableFloat3(spvgentwo::Function* func);
-	static spvgentwo::Instruction* VariableFloat4(spvgentwo::Function* func);
+	static spvgentwo::Instruction* VariableFloat(spvgentwo::Function* func, const char* name = nullptr);
+	static spvgentwo::Instruction* VariableFloat2(spvgentwo::Function* func, const char* name = nullptr);
+	static spvgentwo::Instruction* VariableFloat3(spvgentwo::Function* func, const char* name = nullptr);
+	static spvgentwo::Instruction* VariableFloat4(spvgentwo::Function* func, const char* name = nullptr);
 
 	static spvgentwo::BasicBlock* AddBlock(spvgentwo::Function* func, const char* name);
 

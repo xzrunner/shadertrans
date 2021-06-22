@@ -259,24 +259,24 @@ spvgentwo::BasicBlock* SpirvGenTwo::If(spvgentwo::BasicBlock* bb, spvgentwo::Ins
 	return &bb_merge;
 }
 
-spvgentwo::Instruction* SpirvGenTwo::VariableFloat(spvgentwo::Function* func)
+spvgentwo::Instruction* SpirvGenTwo::VariableFloat(spvgentwo::Function* func, const char* name)
 {
-	return func->variable<float>();
+	return func->variable<float>(name);
 }
 
-spvgentwo::Instruction* SpirvGenTwo::VariableFloat2(spvgentwo::Function* func)
+spvgentwo::Instruction* SpirvGenTwo::VariableFloat2(spvgentwo::Function* func, const char* name)
 {
-	return func->variable<spvgentwo::glsl::vec2>();
+	return func->variable<spvgentwo::glsl::vec2>(name);
 }
 
-spvgentwo::Instruction* SpirvGenTwo::VariableFloat3(spvgentwo::Function* func)
+spvgentwo::Instruction* SpirvGenTwo::VariableFloat3(spvgentwo::Function* func, const char* name)
 {
-	return func->variable<spvgentwo::glsl::vec3>();
+	return func->variable<spvgentwo::glsl::vec3>(name);
 }
 
-spvgentwo::Instruction* SpirvGenTwo::VariableFloat4(spvgentwo::Function* func)
+spvgentwo::Instruction* SpirvGenTwo::VariableFloat4(spvgentwo::Function* func, const char* name)
 {
-	return func->variable<spvgentwo::glsl::vec4>();
+	return func->variable<spvgentwo::glsl::vec4>(name);
 }
 
 spvgentwo::BasicBlock* SpirvGenTwo::AddBlock(spvgentwo::Function* func, const char* name)

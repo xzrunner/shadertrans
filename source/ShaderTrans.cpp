@@ -209,7 +209,7 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl, const s
     }
 }
 
-void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
+void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl, const char* inc_dir,
 	                         std::vector<unsigned int>& spirv, bool no_link, std::ostream& out)
 {
     if (glsl.empty()) {
@@ -243,6 +243,9 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl,
     const int default_version = 100;
 
     DirStackFileIncluder includer;
+    if (inc_dir) {
+        includer.pushExternalLocalDirectory(inc_dir);
+    }
 
     std::string preprocessed_glsl;
     if (!shader.preprocess(&resources, default_version, ENoProfile, false, false, messages, &preprocessed_glsl, includer))

@@ -13,7 +13,7 @@ namespace spirv
 void Linker::AddModule(ShaderStage stage, const std::string& glsl)
 {
     std::vector<unsigned int> spv;
-    ShaderTrans::GLSL2SpirV(stage, glsl, spv, true);
+    ShaderTrans::GLSL2SpirV(stage, glsl, nullptr, spv, true);
 
     //std::string str;
     //ShaderTrans::SpirV2GLSL(stage, spv, str);

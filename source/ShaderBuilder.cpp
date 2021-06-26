@@ -252,7 +252,7 @@ ShaderBuilder::AddModule(ShaderStage stage, const std::string& _code, const std:
 
 	std::vector<unsigned int> spv;
     if (lang == "glsl") {
-        shadertrans::ShaderTrans::GLSL2SpirV(stage, code, spv, true);
+        shadertrans::ShaderTrans::GLSL2SpirV(stage, code, nullptr, spv, true);
     }  else if (lang == "hlsl") {
         shadertrans::ShaderTrans::HLSL2SpirV(stage, code, entry_point, spv);
     }

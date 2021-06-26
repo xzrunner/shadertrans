@@ -14,7 +14,7 @@ class ShaderTrans
 public:
 	static void HLSL2SpirV(ShaderStage stage, const std::string& hlsl, const std::string& entry_point,
 		std::vector<unsigned int>& spirv, std::ostream& out = std::cerr);
-	static void GLSL2SpirV(ShaderStage stage, const std::string& glsl,
+	static void GLSL2SpirV(ShaderStage stage, const std::string& glsl, const char* inc_dir,
 		std::vector<unsigned int>& spirv, bool no_link = false, std::ostream& out = std::cerr);
 	static void SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>& spirv,
 		std::string& glsl, bool use_ubo = false, std::ostream& out = std::cerr);

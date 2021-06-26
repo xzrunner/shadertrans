@@ -70,7 +70,7 @@ std::vector<unsigned int> ShaderRename::GetResult(ShaderStage stage)
     auto glsl = m_compiler->compile();
 
     std::vector<unsigned int> ret;
-    ShaderTrans::GLSL2SpirV(stage, glsl, ret);
+    ShaderTrans::GLSL2SpirV(stage, glsl, nullptr, ret);
     return ret;
 }
 

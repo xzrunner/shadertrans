@@ -8,6 +8,9 @@
 #include <spirv_glsl.hpp>
 #include <spirv_reflect.h>
 #include <spvgentwo/SpvGenTwo.h>
+#include <spvgentwo/Grammar.h>
+#include <common/HeapAllocator.h>
+#include <common/ConsoleLogger.h>
 
 #include <fstream>
 
@@ -369,6 +372,8 @@ Variable parser_spvgentwo_variable(const spvgentwo::Instruction& inst)
         ret.type = VarType::Array;
     } else if (type.isStruct()) {
         ret.type = VarType::Struct;
+    } else if (type.isSampledImage()) {
+        ret.type = VarType::Sampler;
     }
     return ret;
 }
@@ -488,36 +493,36 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 bool ShaderReflection::GetFunction(const std::vector<unsigned int>& spirv,
                                    const std::string& name, Function& func)
 {
-    //spvgentwo::HeapAllocator alloc;
-    //spvgentwo::ConsoleLogger logger;
+    spvgentwo::HeapAllocator alloc;
+    spvgentwo::ConsoleLogger logger;
 
-    //spvgentwo::Module spv_module(&alloc, &logger);
-    //spvgentwo::Grammar gram(&alloc);
+    spvgentwo::Module spv_module(&alloc, &logger);
+    spvgentwo::Grammar gram(&alloc);
 
-    //BinaryVectorReader reader(spirv);
-    //if (spv_module.readAndInit(reader, gram) == false) {
-    //    return false;
-    //}
+    BinaryVectorReader reader(spirv);
+    if (spv_module.readAndInit(reader, gram) == false) {
+        return false;
+    }
 
-    //for (const spvgentwo::Function& fun : spv_module.getFunctions())
-    //{
-    //    std::string fun_name = fun.getName();
+    for (const spvgentwo::Function& fun : spv_module.getFunctions())
+    {
+        std::string fun_name = fun.getName();
 
-    //    auto itr_dot = fun_name.find('.');
-    //    if (itr_dot != std::string::npos) {
-    //        fun_name = fun_name.substr(itr_dot + 1);
-    //    }        
-    //    if (fun_name.substr(0, fun_name.find_first_of('(')) == name)
-    //    {
-    //        func.ret_type = parser_spvgentwo_variable(*fun.getReturnTypeInstr());
-    //        for (auto& param : fun.getParameters()) {
-    //            func.arguments.push_back(parser_spvgentwo_variable(param));
-    //        }
-    //        return true;
-    //    }
-    //}
+        auto itr_dot = fun_name.find('.');
+        if (itr_dot != std::string::npos) {
+            fun_name = fun_name.substr(itr_dot + 1);
+        }        
+        if (fun_name.substr(0, fun_name.find_first_of('(')) == name)
+        {
+            func.ret_type = parser_spvgentwo_variable(*fun.getReturnTypeInstr());
+            for (auto& param : fun.getParameters()) {
+                func.arguments.push_back(parser_spvgentwo_variable(param));
+            }
+            return true;
+        }
+    }
 
-    //return false;
+    return false;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -535,20 +540,23 @@ bool ShaderReflection::GetFunction(const std::vector<unsigned int>& spirv,
 
     ////////////////////////////////////////////////////////////////////////////
 
-    spirv::Parser parser;
-    spirv::Module module;
-    parser.Parse(spirv, module);
-    auto f = module.functions.find(name);
-    if (f == module.functions.end()) {
-        return false;
-    }
+    //spirv::Parser parser;
+    //spirv::Module module;
+    //parser.Parse(spirv, module);
+    //auto f = module.functions.find(name);
+    //if (f == module.functions.end()) {
+    //    return false;
+    //}
 
-    for (auto& v : f->second.arguments) {
-        func.arguments.push_back(parser_spirv_variable(v, module));
-    }
-    func.ret_type = parser_spirv_variable(f->second.ret_type, module);
+    //for (auto& v : f->second.arguments) {
 
-    return true;
+    //    auto zz = parser_spirv_variable(v, module);
+
+    //    func.arguments.push_back(parser_spirv_variable(v, module));
+    //}
+    //func.ret_type = parser_spirv_variable(f->second.ret_type, module);
+
+    //return true;
 
     ////////////////////////////////////////////////////////////////////////////
 }

@@ -29,12 +29,16 @@ public:
         Sampler,
         Image,
         Void,
+        StorageBuffer,
     };
 
     struct Variable
     {
         std::string name;
         VarType type;
+
+        uint32_t binding;
+
         std::vector<Variable> children;
     };
 

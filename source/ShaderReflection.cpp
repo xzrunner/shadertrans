@@ -423,6 +423,25 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 	//	}
 	//}
 
+	// ssbo
+    for (auto& resource : resources.storage_buffers)
+    {
+        auto ssbo_name = resource.name;
+        spirv_cross::SPIRType type = compiler.get_type(resource.base_type_id);
+        assert(type.basetype == spirv_cross::SPIRType::Struct);
+
+        Variable var;
+
+        //uint32_t set = compiler.get_decoration(resource.id, ::spv::DecorationDescriptorSet);
+        uint32_t binding = compiler.get_decoration(resource.id, ::spv::DecorationBinding);
+
+        var.name = ssbo_name;
+        var.type = VarType::StorageBuffer;
+        var.binding = binding;
+
+        uniforms.push_back(var);
+    }
+
 	// uniforms
     for (auto& resource : resources.uniform_buffers)
     {
@@ -432,8 +451,8 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
             get_struct_uniforms(compiler, resource.base_type_id, type, uniforms, ubo_name);
         }
 
-		uint32_t set = compiler.get_decoration(resource.id, ::spv::DecorationDescriptorSet);
-		uint32_t binding = compiler.get_decoration(resource.id, ::spv::DecorationBinding);		
+		//uint32_t set = compiler.get_decoration(resource.id, ::spv::DecorationDescriptorSet);
+		//uint32_t binding = compiler.get_decoration(resource.id, ::spv::DecorationBinding);		
     }
 
     int idx = 0;
@@ -450,11 +469,13 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
 
 		unif.name = name;
 
-		uint32_t set = compiler.get_decoration(resource.id, ::spv::DecorationDescriptorSet);
+		//uint32_t set = compiler.get_decoration(resource.id, ::spv::DecorationDescriptorSet);
 		uint32_t binding = compiler.get_decoration(resource.id, ::spv::DecorationBinding);
 
 		// todo
 		unif.type = VarType::Sampler;
+
+        unif.binding = binding;
 
 		uniforms.push_back(unif);
 
@@ -485,6 +506,9 @@ void ShaderReflection::GetUniforms(const std::vector<unsigned int>& spirv,
         unif.name = compiler.get_name(resource.id);
 
         unif.type = VarType::Image;
+
+        uint32_t binding = compiler.get_decoration(resource.id, ::spv::DecorationBinding);
+        unif.binding = binding;
 
         uniforms.push_back(unif);
 	}

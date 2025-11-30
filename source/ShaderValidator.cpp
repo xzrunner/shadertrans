@@ -47,7 +47,7 @@ bool ShaderValidator::Validate(const std::string& code, bool is_glsl, std::ostre
 		IFTARG(sourceBlob->GetBufferSize() >= 4);
 
 		std::wstring entryPointUtf16;
-		Unicode::UTF8ToWideString(entryPoint, &entryPointUtf16);
+		Unicode::UTF8ToUTF16String(entryPoint, &entryPointUtf16);
 
 		std::wstring shaderProfile = hlsl_shader_profile_name(m_stage, 6, 0);
 

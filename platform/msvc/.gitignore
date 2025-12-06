@@ -1,7 +1,0 @@
-shadertrans/
-projects/*
-
-!projects/shadertrans.vcxproj
-!projects/shadertrans.vcxproj.filters
-!projects/shadertrans_new.vcxproj
-!projects/shadertrans_new.vcxproj.filters

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 
 project(shadertrans)
 
@@ -103,21 +103,8 @@ set(ALL_FILES
     ${tools__trans}
 )
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/SPIRV-Headers)
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/SPIRV-Tools)
+add_library(${PROJECT_NAME} STATIC ${ALL_FILES})
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/external/SpvGenTwo/lib/include)
-include_directories(${CMAKE_SOURCE_DIR}/external/SpvGenTwo/common/include)
-include_directories(${CMAKE_SOURCE_DIR}/external/SPIRV-Tools/include)
-include_directories(${CMAKE_SOURCE_DIR}/external/SPIRV-Tools)
-include_directories(${CMAKE_SOURCE_DIR}/external/SPIRV-Headers/include)
-include_directories(${CMAKE_SOURCE_DIR}/external/SPIRV-Headers/include/spirv/unified1)
-include_directories(${CMAKE_SOURCE_DIR}/external/glslang)
-include_directories(${CMAKE_SOURCE_DIR}/external/SPIRV-Cross)
-include_directories(${CMAKE_SOURCE_DIR}/external/SPIRV-Reflect)
-include_directories(${CMAKE_SOURCE_DIR}/external/DirectXShaderCompiler/include)
-
-add_library(shadertrans STATIC ${ALL_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE include external/SpvGenTwo/lib/include external/SpvGenTwo/common/include external/SPIRV-Tools/include external/SPIRV-Tools external/SPIRV-Headers/include external/SPIRV-Headers/include/spirv/unified1 external/glslang external/SPIRV-Cross external/SPIRV-Reflect external/DirectXShaderCompiler/include)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

@@ -64,7 +64,7 @@ public:
         }
 
         std::string utf8FileName;
-        if (!Unicode::UTF16ToUTF8String(fileName, &utf8FileName))
+        if (!Unicode::WideToUTF8String(fileName, &utf8FileName))
         {
             return E_FAIL;
         }
@@ -168,7 +168,7 @@ void ShaderTrans::HLSL2SpirV(ShaderStage stage, const std::string& hlsl, const s
     IFTARG(sourceBlob->GetBufferSize() >= 4);
 
     std::wstring entryPointUtf16;
-    Unicode::UTF8ToUTF16String(entry_point.c_str(), &entryPointUtf16);
+    Unicode::UTF8ToWideString(entry_point.c_str(), &entryPointUtf16);
 
     std::wstring shaderProfile = hlsl_shader_profile_name(stage, 6, 0);;
 

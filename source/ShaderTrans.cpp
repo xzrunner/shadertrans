@@ -299,10 +299,37 @@ void ShaderTrans::SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>&
             op.emit_push_constant_as_uniform_buffer  = true;
             op.emit_uniform_buffer_as_plain_uniforms = true;
         }
+        // fix for mac
+        op.version = 410;
         compiler.set_common_options(op);
 
         try {
             compiler.build_combined_image_samplers();
+
+            // fix for mac
+            if (stage == ShaderStage::VertexShader)
+            {
+                auto resources = compiler.get_shader_resources();
+                for (auto& resource : resources.stage_outputs)
+                {
+                    std::string name = compiler.get_name(resource.id);
+                    if (name.find("out.var.") == 0)
+                        name = name.substr(4);
+                    compiler.set_name(resource.id, name);
+                }
+            }
+            else if (stage == ShaderStage::PixelShader)
+            {
+                auto resources = compiler.get_shader_resources();
+                for (auto& resource : resources.stage_inputs)
+                {
+                    std::string name = compiler.get_name(resource.id);
+                    if (name.find("in.var.") == 0)
+                        name = name.substr(3);
+                    compiler.set_name(resource.id, name);
+                }
+            }
+
             glsl = compiler.compile();
         } catch (const std::exception& e) {
             out << e.what() << "\n";

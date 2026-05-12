@@ -105,6 +105,7 @@ set(ALL_FILES
 
 add_library(${PROJECT_NAME} STATIC ${ALL_FILES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE include external/SpvGenTwo/lib/include external/SpvGenTwo/common/include external/SPIRV-Tools/include external/SPIRV-Tools external/SPIRV-Headers/include external/SPIRV-Headers/include/spirv/unified1 external/glslang external/SPIRV-Cross external/SPIRV-Reflect external/DirectXShaderCompiler/include)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PRIVATE external/SpvGenTwo/lib/include external/SpvGenTwo/common/include external/SPIRV-Tools/include external/SPIRV-Tools external/SPIRV-Headers/include external/SPIRV-Headers/include/spirv/unified1 external/glslang external/SPIRV-Cross external/SPIRV-Reflect external/DirectXShaderCompiler/include)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

@@ -105,6 +105,15 @@ set(ALL_FILES
 
 add_library(${PROJECT_NAME} STATIC ${ALL_FILES})
 
+if(APPLE)
+    # On Windows these come from prebuilt LLVMDxcSupport.lib; on macOS we compile DXC's
+    # cross-platform support shims: Unicode.cpp (mbstowcs-based conversions) and
+    # WinAdapter.cpp (the non-Windows Win32 adapter, e.g. CAllocator).
+    target_sources(${PROJECT_NAME} PRIVATE
+        external/DirectXShaderCompiler/lib/DxcSupport/Unicode.cpp
+        external/DirectXShaderCompiler/lib/DxcSupport/WinAdapter.cpp)
+endif()
+
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE external/SpvGenTwo/lib/include external/SpvGenTwo/common/include external/SPIRV-Tools/include external/SPIRV-Tools external/SPIRV-Headers/include external/SPIRV-Headers/include/spirv/unified1 external/glslang external/SPIRV-Cross external/SPIRV-Reflect external/DirectXShaderCompiler/include)
 

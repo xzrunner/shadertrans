@@ -73,7 +73,10 @@ private:
 	std::unique_ptr<spvgentwo::Grammar> m_gram;
 
 	std::vector<std::shared_ptr<Module>> m_modules;
-	std::unique_ptr<spvgentwo::Module> m_main = nullptr;
+	// No "= nullptr": the default member initializer would force ~unique_ptr<Module>
+	// to be instantiated in every consumer of this header (where Module is only
+	// forward-declared), which clang rejects. unique_ptr default-constructs to null.
+	std::unique_ptr<spvgentwo::Module> m_main;
 	spvgentwo::Function* m_main_func = nullptr;
 
 	// state

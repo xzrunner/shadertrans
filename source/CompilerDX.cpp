@@ -1,5 +1,7 @@
 #include "shadertrans/CompilerDX.h"
 
+#include <cstdlib> // getenv (macOS/Linux dxcompiler fallback search)
+
 namespace
 {
 
@@ -95,6 +97,20 @@ CompilerDX::CompilerDX()
     m_dxcompilerDll = ::LoadLibraryA(dllName);
 #else
     m_dxcompilerDll = ::dlopen(dllName, RTLD_LAZY);
+    // A bare dlopen only searches DYLD_LIBRARY_PATH / the dyld fallback path. That
+    // is set when launching from the command line but NOT when launching from an
+    // IDE (e.g. Xcode), so fall back to known absolute install locations.
+    if (m_dxcompilerDll == nullptr)
+    {
+        if (const char* vk = ::getenv("VULKAN_SDK")) {
+            std::string p = std::string(vk) + "/lib/" + dllName;
+            m_dxcompilerDll = ::dlopen(p.c_str(), RTLD_LAZY);
+        }
+    }
+    if (m_dxcompilerDll == nullptr) {
+        std::string p = std::string("/usr/local/lib/") + dllName;
+        m_dxcompilerDll = ::dlopen(p.c_str(), RTLD_LAZY);
+    }
 #endif
 
     if (m_dxcompilerDll != nullptr)

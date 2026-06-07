@@ -282,6 +282,19 @@ void ShaderTrans::GLSL2SpirV(ShaderStage stage, const std::string& glsl, const c
             return;
         }
 
+        // setAutoMapLocations/Bindings(true) above only take effect when mapIO() runs.
+        // Without it, varyings declared without an explicit layout(location=) get NO
+        // Location decoration -> SPIRV-Cross emits no [[user(locnN)]] -> MoltenVK can
+        // only match stage I/O by name, which fails for interface blocks (the VS block
+        // instance "vs_out" vs the FS "fs_in" produce different MSL names) and breaks
+        // the separately-compiled VS->FS link. mapIO() assigns the locations.
+        if (!program.mapIO())
+        {
+            out << "GLSL IO Mapping Failed for: " << glsl << "\n";
+            out << shader.getInfoLog() << "\n" << shader.getInfoDebugLog() << "\n";
+            return;
+        }
+
         spv::SpvBuildLogger logger;
         glslang::SpvOptions spv_options;
         glslang::GlslangToSpv(*program.getIntermediate(shader_type), spirv, &logger, &spv_options);

@@ -314,6 +314,13 @@ void ShaderTrans::SpirV2GLSL(ShaderStage stage, const std::vector<unsigned int>&
         }
         // fix for mac
         op.version = 410;
+        // Don't emit layout(binding = N) on samplers via the 420pack extension:
+        // at version 410 it is only legal through GL_ARB_shading_language_420pack,
+        // which Apple GL lacks and some drivers' GLSL frontends reject outright
+        // (Parallels validates the binding against a bogus 2-unit limit). The GL
+        // backend assigns texture units itself after link (unirender
+        // ShaderProgram::BindTextures), so the qualifiers are redundant there.
+        op.enable_420pack_extension = false;
         compiler.set_common_options(op);
 
         try {
